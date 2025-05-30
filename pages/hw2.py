@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as plotly
 import numpy as np
 import pandas as pd
-
+import altair as alt
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
 L = st.sidebar.slider("Labour", min_value=1, max_value=25, value=25, step=1)
