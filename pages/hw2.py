@@ -38,8 +38,7 @@ df = pd.DataFrame({
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 fig = go.Figure()
 fig.add_trace(
-        go.Scatter(x=df['x'], y=df['y'], mode='lines', yaxis: {fixedrange: true},
-xaxis : {fixedrange: true}, fill='tozeroy')
+        go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
 
 #fig.update_traces(
