@@ -5,12 +5,12 @@ import pandas as pd
 import altair as alt
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
-L = st.sidebar.slider("Labour", min_value=1, max_value=30, value=15, step=1)
+L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=15, step=1)
 st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 10, 5, step=1)
 e_y = st.sidebar.slider("🟠", 1, 10, 5, step=1)
 
-frogs = np.arange(0,150,0.05)
+frogs = np.arange(0,200,0.05)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
