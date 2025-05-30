@@ -11,9 +11,9 @@ e_x = st.sidebar.slider("🐸", 1, 20, 13, step=1)
 e_y = st.sidebar.slider("🟠", 1, 20, 15, step=1)
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
-frogs.append(max_frogs)
+np.append(frogs,max_frogs)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
-oranges.append(0)
+np.append(oranges,0)
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
         'x': frogs,
