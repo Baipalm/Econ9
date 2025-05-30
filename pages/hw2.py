@@ -41,18 +41,8 @@ fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
 fig.update_layout(
-    xaxis = dict(
-        tickmode = 'linear',
-        tick0 = 0,
-        dtick = 10
-    )
-)
-fig.update_layout(
-    yaxis = dict(
-        tickmode = 'linear',
-        tick0 = 0,
-        dtick = 10
-    )
+   yaxis: {fixedrange: true},
+xaxis : {fixedrange: true}
 )
 
 #fig.update_traces(
@@ -64,8 +54,7 @@ fig.update_layout(width=800, height=800)
 #fig = plotly.line(x=frogs,y=oranges)
 #fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
 
-st.plotly_chart(fig, use_container_width=True, selection_mode=('points'),yaxis: {fixedrange: true},
-xaxis : {fixedrange: true})
+st.plotly_chart(fig, use_container_width=True, selection_mode=('points'))
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
   
