@@ -15,5 +15,5 @@ oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 # fig = plotly.line(x=frogs,y=oranges)
 # fig.layout.xaxis.fixedrange = True
 # fig.layout.yaxis.fixedrange = True
-st.line_chart(x = frogs, y = oranges, xlabel="frog", ylabel="orange")
+st.line_chart(x = frogs, y = oranges, x_label="frog", y_label="orange")
 
