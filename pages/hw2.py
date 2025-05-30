@@ -38,6 +38,10 @@ df = pd.DataFrame({
 #fig_mpl = abline(slope,intercept)
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 fig = go.Figure()
+fig.update_layout(
+    xaxis=dict(range=[0, 130]),  # Set x-axis range from 0 to 6
+    yaxis=dict(range=[0, 130])   # Set y-axis range from 5 to 20
+)
 fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
@@ -47,7 +51,7 @@ fig.update_xaxes(fixedrange=True)
 #    text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
 #    hovertemplate="<b>%{text}</b><extra></extra>"
 #)
-fig.update_yaxes(constrain='range')
+
 fig.update_layout(width=800, height=800)
 #fig = plotly.line(x=frogs,y=oranges)
 #fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
