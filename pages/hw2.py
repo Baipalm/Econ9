@@ -42,13 +42,9 @@ fig.add_trace(
 )
 fig.update_traces(
     text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
-    hovertemplate="<b>%{text}</b><extra></extra>"
+    hovertemplate="<extra><b>%{text}</b></extra>"
 )
-fig.update_traces(marker=dict(size=20,  # Increased marker size
-                              line=dict(width=2, color='black'))) # Add a black outline
 
-# Customize hover information
-fig.update_layout(hovermode='closest')
 fig.update_layout(width=400, height=600)
 #fig = plotly.line(x=frogs,y=oranges)
 #fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
