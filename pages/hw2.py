@@ -18,8 +18,8 @@ df = pd.DataFrame({
         'y': oranges
     })
 chart = alt.Chart(df).mark_line().encode(
-    alt.X('x:Q', scale=alt.Scale(domain=[0,50], nice=False)),
-    alt.Y('y:Q', scale=alt.Scale(domain=[0,50])),
+    alt.X('x:Q', scale=alt.Scale(domain=[0,60], nice=False)),
+    alt.Y('y:Q', scale=alt.Scale(domain=[0,60])),
 )
 st.altair_chart(chart.properties(width=600, height=600)) 
 
