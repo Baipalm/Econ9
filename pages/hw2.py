@@ -12,7 +12,7 @@ e_x = st.sidebar.slider("🐸", 1, 20, 10, step=1)
 e_y = st.sidebar.slider("🟠", 1, 20, 10, step=1)
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
-np.append(frogs,max_frogs)
+np.append(frogs,e_x*np.sqrt(L))
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 np.append(oranges,0)
 data = np.hstack((frogs,oranges))
@@ -26,7 +26,7 @@ df = pd.DataFrame({
 #    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
 #)
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
-fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'),layout_xaxis_range=[0,121],layout_yaxis_range=[0,121])
+fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'),layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
 #fig = plotly.line(x=frogs,y=oranges)
 
 st.plotly_chart(fig, use_container_width=True)
