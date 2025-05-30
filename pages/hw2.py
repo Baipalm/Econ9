@@ -11,6 +11,8 @@ e_y = st.sidebar.slider("efficiency of oranges", 1, 10, 5, step=1)
 frogs = np.arange(0,40,0.1)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 
-
-st.line_chart(chart_data, x="frogs", y="oranges")
+# fig = plotly.line(x=frogs,y=oranges)
+# fig.layout.xaxis.fixedrange = True
+# fig.layout.yaxis.fixedrange = True
+st.line_chart([forgs,oranges], x="frogs", y="oranges")
 
