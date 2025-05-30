@@ -5,7 +5,7 @@ import numpy as np
 #import matplotlib.pyplot as plt 
 #import plotly.tools as tls
 import pandas as pd
-import altair as alt
+#import altair as alt
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
 L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=20, step=1)
@@ -42,7 +42,7 @@ fig.add_trace(
 )
 fig.update_traces(
     text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
-    hovertemplate="<extra><b>%{text}</b></extra>"
+    hovertemplate="<b>%{text}</b><extra></extra>"
 )
 
 fig.update_layout(width=400, height=600)
