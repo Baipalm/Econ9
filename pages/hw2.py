@@ -10,11 +10,21 @@ st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 5, 2, step=1)
 e_y = st.sidebar.slider("🟠", 1, 5, 2, step=1)
 
-frogs = np.arange(-1,30,0.05)
+frogs = np.arange(0,30,0.05)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 data = np.hstack((frogs,oranges))
+df = pd.DataFrame({
+        'x': frogs,
+        'y': oranges
+    })
+chart = alt.Chart(df).mark_line().encode(
+    alt.X('x:Q', scale=alt.Scale(domain=[0, 30], nice=False)),
+    alt.Y('y:Q', scale=alt.Scale(domain=[0, 30])),
+)
+st.altair_chart(chart.properties(width=600, height=400)) 
+
 # fig = plotly.line(x=frogs,y=oranges)
 # fig.layout.xaxis.fixedrange = True
 # fig.layout.yaxis.fixedrange = True
-st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
+#st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
