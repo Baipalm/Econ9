@@ -1,5 +1,6 @@
 import streamlit as st
-import plotly.express as plotly
+import plotly.express as exp
+import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 import altair as alt
@@ -25,8 +26,8 @@ df = pd.DataFrame({
 #    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
 #)
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
-
-fig = plotly.line(x=frogs,y=oranges)
+fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'))
+#fig = plotly.line(x=frogs,y=oranges)
 fig.layout.xaxis.fixedrange = True
 fig.layout.yaxis.fixedrange = True
 st.plotly_chart(fig, use_container_width=True)
