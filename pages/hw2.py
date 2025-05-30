@@ -5,8 +5,7 @@ import pandas as pd
 
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
-st.sidebar.subheader("Total Labour")
-L = st.sidebar.slider("Labour", min_value=10, max_value=100, value=50, step=10, label_visibility="hidden")
+L = st.sidebar.slider("Labour", min_value=10, max_value=100, value=50, step=10)
 st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 10, 5, step=1)
 e_y = st.sidebar.slider("🟠", 1, 10, 5, step=1)
