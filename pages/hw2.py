@@ -28,8 +28,8 @@ df = pd.DataFrame({
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'))
 #fig = plotly.line(x=frogs,y=oranges)
-#fig.layout.xaxis.fixedrange = True
-#fig.layout.yaxis.fixedrange = True
+fig.layout.xaxis.fixedrange = True
+fig.layout.yaxis.fixedrange = True
 st.plotly_chart(fig, use_container_width=True)
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
