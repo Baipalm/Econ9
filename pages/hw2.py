@@ -14,7 +14,7 @@ y = e_y*np.sqrt(L-(x/e_x)**2)
 fig = plotly.line(x=x,y=y)
 fig.update_layout(
        xaxis_range=[0, 30],  # Set x-axis range from 0 to 4
-       yaxis_range=[0, 10]   # Set y-axis range from 0 to 7
+       yaxis_range=[0, 30]   # Set y-axis range from 0 to 7
    )
 st.plotly_chart(fig)
 
