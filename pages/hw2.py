@@ -5,10 +5,10 @@ import pandas as pd
 
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
-L = st.sidebar.slider("Labour", min_value=10, max_value=100, value=50, step=10)
+L = st.sidebar.slider("Labour", min_value=1, max_value=50, value=25, step=1)
 st.sidebar.subheader("Production Efficiency")
-e_x = st.sidebar.slider("🐸", 1, 10, 5, step=1)
-e_y = st.sidebar.slider("🟠", 1, 10, 5, step=1)
+e_x = st.sidebar.slider("🐸", 1, 5, 2.5, step=0.1)
+e_y = st.sidebar.slider("🟠", 1, 5, 2.5, step=0.1)
 
 frogs = np.arange(0,30,0.1)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
