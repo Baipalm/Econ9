@@ -15,5 +15,5 @@ data = np.hstack((frogs,oranges))
 # fig = plotly.line(x=frogs,y=oranges)
 # fig.layout.xaxis.fixedrange = True
 # fig.layout.yaxis.fixedrange = True
-st.line_chart(oranges, x_label="frog", y_label="orange")
+st.line_chart(oranges, x_label="frog", y_label="🟠")
 
