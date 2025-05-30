@@ -45,7 +45,7 @@ fig.add_trace(
 #    hovertemplate="<b>%{text}</b><extra></extra>"
 #)
 
-fig.update_layout(width=400, height=400)
+fig.update_layout(width=800, height=800)
 #fig = plotly.line(x=frogs,y=oranges)
 #fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
 
