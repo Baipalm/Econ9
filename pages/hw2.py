@@ -51,7 +51,7 @@ fig.update_layout(
     xaxis = dict(
         tickmode = 'linear',
         tick0 = 0,
-        dtick = q0
+        dtick = 10
     )
 )
 #fig.update_traces(
