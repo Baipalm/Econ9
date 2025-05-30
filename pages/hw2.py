@@ -18,14 +18,15 @@ df = pd.DataFrame({
         'y': oranges
     })
 
-chart = alt.Chart(df).mark_line().encode(
-    alt.X('x:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🐸'),
-    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
-)
-st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
+#chart = alt.Chart(df).mark_line().encode(
+#    alt.X('x:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🐸'),
+#    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
+#)
+#st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 
-# fig = plotly.line(x=frogs,y=oranges)
-# fig.layout.xaxis.fixedrange = True
-# fig.layout.yaxis.fixedrange = True
+fig = plotly.line(x=frogs,y=oranges)
+fig.layout.xaxis.fixedrange = True
+fig.layout.yaxis.fixedrange = True
+fig.show()
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
