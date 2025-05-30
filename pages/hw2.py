@@ -10,7 +10,7 @@ st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 10, 5, step=1)
 e_y = st.sidebar.slider("🟠", 1, 10, 5, step=1)
 
-frogs = np.arange(0,100,0.05)
+frogs = np.arange(-10,100,0.05)
 oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
@@ -18,8 +18,8 @@ df = pd.DataFrame({
         'y': oranges
     })
 chart = alt.Chart(df).mark_line().encode(
-    alt.X('x:Q', scale=alt.Scale(domain=[0, 40], nice=False)),
-    alt.Y('y:Q', scale=alt.Scale(domain=[0, 40])),
+    alt.X('x:Q', scale=alt.Scale(domain=[0,25], nice=False)),
+    alt.Y('y:Q', scale=alt.Scale(domain=[0,25])),
 )
 st.altair_chart(chart.properties(width=600, height=600)) 
 
