@@ -8,8 +8,8 @@ st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
 L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=20, step=1)
 st.sidebar.subheader("Production Efficiency")
-e_x = st.sidebar.slider("🐸", 1, 10, 6, step=1)
-e_y = st.sidebar.slider("🟠", 1, 20, 15, step=1)
+e_x = st.sidebar.slider("🐸", 1, 20, 10, step=1)
+e_y = st.sidebar.slider("🟠", 1, 20, 10, step=1)
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
 np.append(frogs,max_frogs)
@@ -28,8 +28,8 @@ df = pd.DataFrame({
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'))
 #fig = plotly.line(x=frogs,y=oranges)
-fig.layout.xaxis.fixedrange = True
-fig.layout.yaxis.fixedrange = True
+#fig.layout.xaxis.fixedrange = True
+#fig.layout.yaxis.fixedrange = True
 st.plotly_chart(fig, use_container_width=True)
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
