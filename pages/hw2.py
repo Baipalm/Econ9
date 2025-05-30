@@ -15,11 +15,11 @@ oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
         'x': frogs,
-        'y': oranges-np.abs(np.sqrt(L)*e_x-oranges)
+        'y': oranges
     })
 chart = alt.Chart(df).mark_line().encode(
-    alt.X('x:Q', scale=alt.Scale(domain=[0,150], nice=False)),
-    alt.Y('y:Q', scale=alt.Scale(domain=[0,150])),
+    alt.X('x:Q', scale=alt.Scale(domain=[0,e_x * np.sqrt(L)], nice=False)),
+    alt.Y('y:Q', scale=alt.Scale(domain=[0,e_y * np.sqrt(L)])),
 )
 st.altair_chart(chart.properties(width=600, height=600)) 
 
