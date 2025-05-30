@@ -40,6 +40,20 @@ fig = go.Figure()
 fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
+fig.update_layout(
+    yaxis = dict(
+        tickmode = 'linear',
+        tick0 = 0,
+        dtick = 10
+    )
+)
+fig.update_layout(
+    xaxis = dict(
+        tickmode = 'linear',
+        tick0 = 0,
+        dtick = q0
+    )
+)
 #fig.update_traces(
 #    text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
 #    hovertemplate="<b>%{text}</b><extra></extra>"
