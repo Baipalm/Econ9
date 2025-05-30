@@ -41,14 +41,14 @@ fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
 fig.update_layout(
-    yaxis = dict(
+    xaxis = dict(
         tickmode = 'linear',
         tick0 = 0,
         dtick = 10
     )
 )
 fig.update_layout(
-    xaxis = dict(
+    yaxis = dict(
         tickmode = 'linear',
         tick0 = 0,
         dtick = 10
