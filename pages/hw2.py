@@ -36,10 +36,16 @@ df = pd.DataFrame({
 #slope = oranges/x
 #fig_mpl = abline(slope,intercept)
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
-trace1 = go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
-trace2 = (5,2)
+fig = go.Figure()
+fig.add_trace(
+        go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
+)
+fig.update_traces(
+    text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(x, y)],
+    hovertemplate="<b>%{text}</b><extra></extra>"
+)
 #fig = plotly.line(x=frogs,y=oranges)
-fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
+#fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
 fig.update_layout(width=500, height=600)
 st.plotly_chart(fig, use_container_width=True, selection_mode=('points'))
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
