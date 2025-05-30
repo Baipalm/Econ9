@@ -8,7 +8,7 @@ st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
 L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=20, step=1)
 st.sidebar.subheader("Production Efficiency")
-e_x = st.sidebar.slider("🐸", 1, 20, 13, step=1)
+e_x = st.sidebar.slider("🐸", 1, 10, 6, step=1)
 e_y = st.sidebar.slider("🟠", 1, 20, 15, step=1)
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
