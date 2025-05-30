@@ -36,7 +36,8 @@ df = pd.DataFrame({
 #slope = oranges/x
 #fig_mpl = abline(slope,intercept)
 #st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
-fig = go.Figure()
+fig = go.Figure(yaxis: {fixedrange: true},
+xaxis : {fixedrange: true},)
 fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
 )
@@ -54,6 +55,7 @@ fig.update_layout(
         dtick = 10
     )
 )
+
 #fig.update_traces(
 #    text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
 #    hovertemplate="<b>%{text}</b><extra></extra>"
