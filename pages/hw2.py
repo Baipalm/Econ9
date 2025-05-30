@@ -2,6 +2,7 @@ import streamlit as st
 import plotly.express as exp
 import plotly.graph_objects as go
 import numpy as np
+import matplotlib.pyplot as plt 
 import pandas as pd
 import altair as alt
 st.title("Production Possibility Curves")
@@ -20,7 +21,12 @@ df = pd.DataFrame({
         'x': frogs,
         'y': oranges
     })
-
+def abline(slope, intercept):
+    """Plot a line from slope and intercept"""
+    axes = plt.gca()
+    x_vals = np.array(axes.get_xlim())
+    y_vals = intercept + slope * x_vals
+    plt.plot(x_vals, y_vals, '--')
 #chart = alt.Chart(df).mark_line().encode(
 #    alt.X('x:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🐸'),
 #    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
@@ -32,4 +38,9 @@ fig = go.Figure(go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy'),l
 fig.update_layout(width=500, height=600)
 st.plotly_chart(fig, use_container_width=True, selection_mode=('points'))
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
+
+  
+
+
+
 
