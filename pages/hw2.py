@@ -29,6 +29,6 @@ df = pd.DataFrame({
 fig = plotly.line(x=frogs,y=oranges)
 fig.layout.xaxis.fixedrange = True
 fig.layout.yaxis.fixedrange = True
-fig.show()
+st.plotly_chart(fig, use_container_width=True)
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
