@@ -22,7 +22,7 @@ chart = alt.Chart(df).mark_line().encode(
     alt.X('x:Q', scale=alt.Scale(domain=[0, max_frogs*1.1]), title='🐸'),
     alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.1]), title='🟠'),
 )
-st.altair_chart(chart.properties(width=600, height=600)) 
+st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
 
 # fig = plotly.line(x=frogs,y=oranges)
 # fig.layout.xaxis.fixedrange = True
