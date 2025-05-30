@@ -42,7 +42,7 @@ fig.add_trace(
 )
 fig.update_traces(
     text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
-    hovertemplate="<b>%{text}</b>"
+    hovertemplate="<extra><b>%{text}</b></extra>"
 )
 
 fig.update_layout(width=400, height=600)
