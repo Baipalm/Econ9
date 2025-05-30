@@ -43,8 +43,8 @@ fig.update_layout(
     yaxis=dict(range=[0, 130])   # Set y-axis range from 5 to 20
 )
 fig.update_layout(
-    xaxis_title="# of 🐸 ",
-    yaxis_title="# of 🟠"
+    xaxis_title="Units of 🐸 ",
+    yaxis_title="Units of 🟠"
 )
 fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'],mode='lines', fill='tozeroy')
