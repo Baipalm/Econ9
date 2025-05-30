@@ -10,8 +10,8 @@ st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 10, 5, step=1)
 e_y = st.sidebar.slider("🟠", 1, 10, 5, step=1)
 
-frogs = np.arange(0,50,0.1)
-oranges = e_y*np.sqrt(L-(frogs/e_x)**2)-1
+frogs = np.arange(0,30,0.1)
+oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
 data = np.hstack((frogs,oranges))
 # fig = plotly.line(x=frogs,y=oranges)
 # fig.layout.xaxis.fixedrange = True
