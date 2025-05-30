@@ -43,8 +43,9 @@ fig.update_layout(
     yaxis=dict(range=[0, 130])   # Set y-axis range from 5 to 20
 )
 fig.add_trace(
-        go.Scatter(x=df['x'], y=df['y'], mode='lines', fill='tozeroy')
+        go.Scatter(x=df['x'], y=df['y'], x_label='🐸',y_label='🟠',mode='lines', fill='tozeroy')
 )
+
 fig.update_yaxes(fixedrange=True)
 fig.update_xaxes(fixedrange=True)
 #fig.update_traces(
