@@ -9,9 +9,7 @@ import pandas as pd
 
 def frogs_to_oranges(frogs,e_x,e_y,L):
         oranges_squared = e_y**2 * ( L - (frogs / e_x)**2 )
-        for i in oranges_squared:
-                if oranges_squared[i] <= 0:
-                        oranges_squared[i]=0
+        oranges_squared[ oranges_squared <= 0 ] = 0
         oranges = np.sqrt(oranges_squared)
         return oranges
         
