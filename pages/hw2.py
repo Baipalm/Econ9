@@ -77,7 +77,13 @@ fig.add_trace(go.Scatter(
     name='Moving Point',
     marker=dict(color='red', size=10, symbol='circle')
 ))
-fig.add_trace(go.Scatter(
+fig.add_trace(go.Scatter(fig.add_trace(go.Scatter(
+    x=tangent_x,
+    y=tangent_y,
+    mode='lines',
+    name='Tangent Line',
+    line=dict(color='green', dash='dash')
+))
     x=tangent_x,
     y=tangent_y,
     mode='lines',
@@ -92,7 +98,7 @@ fig.update_xaxes(fixedrange=True)
 #    hovertemplate="<b>%{text}</b><extra></extra>"
 #)
 
-fig.update_layout(width=800, height=800)
+fig.update_layout(width=400, height=400)
 #fig = plotly.line(x=frogs,y=oranges)
 #fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
 
