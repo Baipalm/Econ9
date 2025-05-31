@@ -9,7 +9,6 @@ import pandas as pd
 
 def frogs_to_oranges(frogs,e_x,e_y,L):
         oranges = e_y * np.sqrt( L - (frogs / e_x)**2 )
-        np.append(oranges,0)
         return oranges
         
         
@@ -34,7 +33,7 @@ df = pd.DataFrame({
     })
 
 x_point = st.slider("Move the point along the curve", min_value=float(frogs[0]), max_value=float(frogs[-1]), value=np.sqrt(40)*10, step=0.05)
-y_point = frogs_to_oranges(x_point)
+y_point = frogs_to_oranges(x_point,e_x,e_y,L)
 #def abline(slope, intercept):
 #    """Plot a line from slope and intercept"""
 #    axes = plt.gca()
