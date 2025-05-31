@@ -6,23 +6,35 @@ import numpy as np
 #import plotly.tools as tls
 import pandas as pd
 #import altair as alt
+
+def frogs_to_oranges(frogs,e_x,e_y):
+        oranges = e_y * np.sqrt( L - (frogs / e_x)**2 )
+        np.append(oranges,0)
+        return oranges
+        
+        
 st.title("Production Possibility Curves")
 st.sidebar.header("Settings")
 L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=20, step=1)
 st.sidebar.subheader("Production Efficiency")
 e_x = st.sidebar.slider("🐸", 1, 20, 10, step=1)
 e_y = st.sidebar.slider("🟠", 1, 20, 10, step=1)
+
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
 np.append(frogs,e_x*np.sqrt(L))
-oranges = e_y*np.sqrt(L-(frogs/e_x)**2)
-np.append(oranges,0)
+
+
+oranges = frogs_to_oranges(frogs,e_x,e_y)
+
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
         'x': frogs,
         'y': oranges
     })
 
+x_point = st.slider("Move the point along the curve", min_value=float(frogs[0]), max_value=float(frogs[-1]), value=np.sqrt(40)*10, step=0.05)
+y_point = frogs_to_oranges(x_point)
 #def abline(slope, intercept):
 #    """Plot a line from slope and intercept"""
 #    axes = plt.gca()
@@ -49,6 +61,16 @@ fig.update_layout(
 fig.add_trace(
         go.Scatter(x=df['x'], y=df['y'],mode='lines', fill='tozeroy')
 )
+
+fig.add_trace(go.Scatter(
+    x=[x_point],
+    y=[y_point],
+    mode='markers',
+    name='Moving Point',
+    marker=dict(color='red', size=15, symbol='circle')
+))
+
+
 
 fig.update_yaxes(fixedrange=True)
 fig.update_xaxes(fixedrange=True)
