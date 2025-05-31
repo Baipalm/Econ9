@@ -22,9 +22,10 @@ e_y = st.sidebar.slider("🟠", 1, 20, 10, step=1)
 max_frogs = np.sqrt(40)*20
 frogs = np.arange(0, max_frogs, 0.05)
 np.append(frogs,e_x*np.sqrt(L))
-
-
 oranges = frogs_to_oranges(frogs,e_x,e_y,L)
+np.append(oranges,0)
+x_point = st.slider("Move the point along the curve", min_value=float(0), max_value=float(e_x*np.sqrt(L)), value=np.sqrt(40)*10, step=0.05)
+y_point = frogs_to_oranges(x_point,e_x,e_y,L)
 
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
@@ -32,8 +33,7 @@ df = pd.DataFrame({
         'y': oranges
     })
 
-x_point = st.slider("Move the point along the curve", min_value=float(frogs[0]), max_value=float(frogs[-1]), value=np.sqrt(40)*10, step=0.05)
-y_point = frogs_to_oranges(x_point,e_x,e_y,L)
+
 #def abline(slope, intercept):
 #    """Plot a line from slope and intercept"""
 #    axes = plt.gca()
