@@ -28,7 +28,7 @@ x_point = st.slider("Move the point along the curve", min_value=float(0), max_va
 y_point = frogs_to_oranges(x_point,e_x,e_y,L)
 
 # Create tangent line (x range centered at x_point)
-tangent_x = np.linspace(x_point - 5, x_point + 5, 100)
+tangent_x = np.linspace(x_point - 10, x_point + 10, 100)
 h= 1e-5
 tangent_y = (frogs_to_oranges(x_point + h,e_x,e_y,L) - frogs_to_oranges(x_point - h,e_x,e_y,L)) / (2 * h) * (tangent_x - x_point) + y_point
 
