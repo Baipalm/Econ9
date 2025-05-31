@@ -27,13 +27,16 @@ np.append(oranges,0)
 x_point = st.slider("Move the point along the curve", min_value=float(0), max_value=float(e_x*np.sqrt(L)), value=np.sqrt(40)*10, step=0.05)
 y_point = frogs_to_oranges(x_point,e_x,e_y,L)
 
+# Create tangent line (x range centered at x_point)
+tangent_x = np.linspace(x_point - 1, x_point + 1, 100)
+h= 1e-5
+tangent_y = frogs_to_oranges(x_point + h) - frogs_to_oranges(x_point - h)) / (2 * h) * (tangent_x - x_point) + y_point
+
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
         'x': frogs,
         'y': oranges
     })
-
-
 #def abline(slope, intercept):
 #    """Plot a line from slope and intercept"""
 #    axes = plt.gca()
@@ -68,8 +71,19 @@ fig.add_trace(go.Scatter(
     name='Moving Point',
     marker=dict(color='red', size=15, symbol='circle')
 ))
-
-
+fig.add_trace(go.Scatter(
+    
+    mode='lines',
+    name='Moving Point',
+    marker=dict(color='red', size=15, symbol='circle')
+))
+fig.add_trace(go.Scatter(
+    x=tangent_x,
+    y=tangent_y,
+    mode='lines',
+    name='Tangent Line',
+    line=dict(color='red', dash='dash')
+))
 
 fig.update_yaxes(fixedrange=True)
 fig.update_xaxes(fixedrange=True)
