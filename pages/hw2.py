@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 #import altair as alt
 
-def frogs_to_oranges(frogs,e_x,e_y):
+def frogs_to_oranges(frogs,e_x,e_y,L):
         oranges = e_y * np.sqrt( L - (frogs / e_x)**2 )
         np.append(oranges,0)
         return oranges
@@ -25,7 +25,7 @@ frogs = np.arange(0, max_frogs, 0.05)
 np.append(frogs,e_x*np.sqrt(L))
 
 
-oranges = frogs_to_oranges(frogs,e_x,e_y)
+oranges = frogs_to_oranges(frogs,e_x,e_y,L)
 
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
