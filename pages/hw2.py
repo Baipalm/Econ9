@@ -30,7 +30,7 @@ y_point = frogs_to_oranges(x_point,e_x,e_y,L)
 # Create tangent line (x range centered at x_point)
 tangent_x = np.linspace(x_point - 1, x_point + 1, 100)
 h= 1e-5
-tangent_y = frogs_to_oranges(x_point + h) - frogs_to_oranges(x_point - h)) / (2 * h) * (tangent_x - x_point) + y_point
+tangent_y = (frogs_to_oranges(x_point + h) - frogs_to_oranges(x_point - h)) / (2 * h) * (tangent_x - x_point) + y_point
 
 data = np.hstack((frogs,oranges))
 df = pd.DataFrame({
