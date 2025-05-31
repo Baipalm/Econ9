@@ -77,13 +77,7 @@ fig.add_trace(go.Scatter(
     name='Moving Point',
     marker=dict(color='red', size=10, symbol='circle')
 ))
-fig.add_trace(go.Scatter(fig.add_trace(go.Scatter(
-    x=tangent_x,
-    y=tangent_y,
-    mode='lines',
-    name='Tangent Line',
-    line=dict(color='green', dash='dash')
-))
+fig.add_trace(go.Scatter(
     x=tangent_x,
     y=tangent_y,
     mode='lines',
@@ -106,7 +100,6 @@ st.plotly_chart(fig, use_container_width=True, selection_mode=('points'))
 #st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
 
   
-
 
 
 
