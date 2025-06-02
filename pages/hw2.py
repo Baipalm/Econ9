@@ -205,7 +205,8 @@ with col_w1:
         max_value=MAX_L,
         value=st.session_state.L,
         step=1,
-        key="L"
+        key="L",
+        scroll_to=False
     )
     st.slider(
         "Efficiency 🐸 (e_x)",
@@ -213,7 +214,8 @@ with col_w1:
         max_value=MAX_e_x,
         value=st.session_state.e_x,
         step=1,
-        key="e_x"
+        key="e_x",
+        scroll_to=False
     )
 with col_w2:
     st.slider(
@@ -222,7 +224,8 @@ with col_w2:
         max_value=MAX_e_y,
         value=st.session_state.e_y,
         step=1,
-        key="e_y"
+        key="e_y",
+        scroll_to=False
     )
 st.markdown("---")
 
@@ -297,5 +300,6 @@ st.slider(
     max_value=float(x_max),
     value=st.session_state.x_move,
     step=0.05,
-    key="x_move"
+    key="x_move",
+    scroll_to=False
 )
