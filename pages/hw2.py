@@ -66,7 +66,7 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
 
 
 # ─── Sidebar controls ─────────────────────────────────────────────────────────
-st.title("Fixed-Axis PPF with Split View: Data & Tangent")
+st.title("Fixed-Axis PPF with Split View: Data & Tangent (Square Panels)")
 st.sidebar.header("Settings")
 
 L   = st.sidebar.slider("Total Labour (L)",        1, MAX_L,   20, step=1)
@@ -107,6 +107,10 @@ y_tan = slope_at_move * (x_tan - x_move) + y_move
 
 # ─── Layout: two columns ──────────────────────────────────────────────────────
 col1, col2 = st.columns(2)
+
+# Desired fixed size (square) for each chart:
+PLOT_WIDTH  = 550
+PLOT_HEIGHT = 550
 
 # ─── Left Column: Static PPF + Points ────────────────────────────────────────
 with col1:
@@ -155,12 +159,14 @@ with col1:
         )
     )
 
-    # ── Layout tweaks (shared global axes) ──────────────────────────────────
+    # ── Layout tweaks (square axes) ─────────────────────────────────────────
     fig_left.update_layout(
         xaxis=dict(
             range=[0, GLOBAL_x_max * 1.02],
             showgrid=False,
             title_text="Units of 🐸",
+            scaleanchor="y",      # lock aspect ratio
+            scaleratio=1         # ensures x and y scales match
         ),
         yaxis=dict(
             range=[0, GLOBAL_y_max * 1.02],
@@ -169,14 +175,20 @@ with col1:
         ),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        width=550,
-        height=550,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
     )
     fig_left.update_xaxes(fixedrange=True)
     fig_left.update_yaxes(fixedrange=True)
 
-    st.plotly_chart(fig_left, use_container_width=True)
+    # Render at fixed size (square)
+    st.plotly_chart(
+        fig_left,
+        use_container_width=False,
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
+    )
 
 
 # ─── Right Column: PPF + Moving Point + Tangent ─────────────────────────────
@@ -217,12 +229,14 @@ with col2:
         )
     )
 
-    # ── Layout tweaks (shared global axes) ──────────────────────────────────
+    # ── Layout tweaks (square axes) ─────────────────────────────────────────
     fig_right.update_layout(
         xaxis=dict(
             range=[0, GLOBAL_x_max * 1.02],
             showgrid=False,
             title_text="Units of 🐸",
+            scaleanchor="y",      # lock aspect ratio
+            scaleratio=1         # ensures x and y scales match
         ),
         yaxis=dict(
             range=[0, GLOBAL_y_max * 1.02],
@@ -231,11 +245,17 @@ with col2:
         ),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        width=550,
-        height=550,
-        margin=dict(l=20, r=20, t=40, b=20)
+        margin=dict(l=20, r=20, t=40, b=20),
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
     )
     fig_right.update_xaxes(fixedrange=True)
     fig_right.update_yaxes(fixedrange=True)
 
-    st.plotly_chart(fig_right, use_container_width=True)
+    # Render at fixed size (square)
+    st.plotly_chart(
+        fig_right,
+        use_container_width=False,
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
+    )
