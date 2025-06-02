@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Title of the app
-st.title("Interactive Supply and Demand Shifts (Plotly)")
+st.title("Interactive Supply and Demand Shifts (Fixed Scale)")
 
 # Retrieve slider values from session_state (or use defaults if not set)
 intercept_demand = st.session_state.get("intercept_demand", 5.0)
@@ -21,7 +21,6 @@ P_demand = slope_demand * Q + intercept_demand
 P_supply = slope_supply * Q + intercept_supply
 
 # Compute intersection analytically:
-# Solve slope_demand * Q_int + intercept_demand = slope_supply * Q_int + intercept_supply
 intersection_Q = (intercept_supply - intercept_demand) / (slope_demand - slope_supply)
 intersection_P = slope_demand * intersection_Q + intercept_demand
 
@@ -63,18 +62,37 @@ fig.add_trace(
     )
 )
 
-# Update layout: axis ranges, labels, grid
+# Update layout: fixed axis ranges, labels, grid, disable zoom
 fig.update_layout(
-    xaxis=dict(title="Quantity (Q)", range=[0, 10], showgrid=True, gridcolor="lightgray"),
-    yaxis=dict(title="Price (P)", range=[0, 10], showgrid=True, gridcolor="lightgray"),
+    xaxis=dict(
+        title="Quantity (Q)",
+        range=[0, 10],
+        fixedrange=True,            # Prevent zooming/panning on x-axis
+        showgrid=True,
+        gridcolor="lightgray"
+    ),
+    yaxis=dict(
+        title="Price (P)",
+        range=[0, 10],
+        fixedrange=True,            # Prevent zooming/panning on y-axis
+        showgrid=True,
+        gridcolor="lightgray"
+    ),
     width=600,
     height=600,
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
     margin=dict(l=50, r=50, t=50, b=50),
 )
 
-# Display the Plotly chart in Streamlit
-st.plotly_chart(fig, use_container_width=True)
+# Display the Plotly chart in Streamlit with interactions disabled
+st.plotly_chart(
+    fig,
+    use_container_width=True,
+    config={
+        "staticPlot": True,       # Disable all zooming/scrolling interactions
+        "displayModeBar": False   # Hide the mode bar
+    }
+)
 
 # ——————————————————————————————
 # Sliders to shift demand and supply (positioned at the bottom)
