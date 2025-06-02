@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
@@ -18,7 +17,7 @@ def generate_curve(e_x: int, e_y: int, L: int, num_curve_pts: int = 500):
     Returns:
       - x_curve, y_curve: NumPy arrays of length (num_curve_pts+2),
         with endpoints (0, y_max) and (x_max, 0) included,
-        where x_max = e_x * √L, y_max = e_y * √L.
+      - x_max, y_max: the axis intercepts, where x_max = e_x * √L, y_max = e_y * √L.
     """
     x_max = e_x * np.sqrt(L)
     y_max = e_y * np.sqrt(L)
@@ -80,14 +79,14 @@ if st.session_state.x_move > x_max:
 x_move = float(st.session_state.x_move)
 
 # Compute moving point’s y + slope
-y_move       = compute_ppf_y(x_move, e_x, e_y, L)
+y_move        = compute_ppf_y(x_move, e_x, e_y, L)
 slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
 
 # ─── Build Tangent‐Line Segment Centered at (x_move, y_move) ────────────────
 # We pick a fixed half‐span Δ so that the tangent line is drawn from
 # (x_move − Δ) to (x_move + Δ).  Here we choose Δ = 20% of GLOBAL_x_max.
-Δ = 0.20 * GLOBAL_x_max
-x_tan = np.linspace(x_move - Δ, x_move + Δ, 200)
+delta = 0.20 * GLOBAL_x_max
+x_tan = np.linspace(x_move - delta, x_move + delta, 200)
 y_tan = slope_at_move * (x_tan - x_move) + y_move
 
 # ─── Right Figure: PPF Curve, Moving Point & Centered Tangent ──────────────
@@ -108,7 +107,7 @@ fig_right.add_trace(
         y=[y_move],
         mode='markers',
         marker=dict(color='red', size=12, symbol='circle'),
-        name='Moving Point'
+        name='production'
     )
 )
 fig_right.add_trace(
@@ -117,7 +116,7 @@ fig_right.add_trace(
         y=y_tan,
         mode='lines',
         line=dict(color='darkorange', width=2, dash='dash'),
-        name='Centered Tangent'
+        showlegend=False  # remove legend entry for centered tangent
     )
 )
 
@@ -176,4 +175,3 @@ with col2:
         step=0.05,
         key="x_move"
     )
-```
