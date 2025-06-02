@@ -99,14 +99,23 @@ slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
 x_tan = np.linspace(0.0, x_max, 200)
 y_tan = slope_at_move * (x_tan - x_move) + y_move
 
-# Generate random points and classify inside/outside
+# Generate random points and classify inside/outside/on‐curve
 x_rand, y_rand = generate_random_points_global(num_points=30)
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
-is_inside = (y_rand <= ppf_thresholds)
+
+# Identify points on the PPF (intersection)
+is_on_curve = np.isclose(y_rand, ppf_thresholds, atol=1e-3)
+# Points strictly inside (below but not on)
+is_inside = (y_rand < ppf_thresholds) & (~is_on_curve)
+# Points outside
+is_outside = y_rand > ppf_thresholds
+
+x_on    = x_rand[is_on_curve]
+y_on    = y_rand[is_on_curve]
 x_inside  = x_rand[is_inside]
 y_inside  = y_rand[is_inside]
-x_outside = x_rand[~is_inside]
-y_outside = y_rand[~is_inside]
+x_outside = x_rand[is_outside]
+y_outside = y_rand[is_outside]
 
 # ─── First Graph: PPF Curve & Random Points ──────────────────────────────────
 fig_left = go.Figure()
@@ -121,19 +130,21 @@ fig_left.add_trace(
         name='PPF Curve'
     )
 )
+# Red markers: points exactly on the curve
 fig_left.add_trace(
     go.Scatter(
-        x=x_outside,
-        y=y_outside,
+        x=x_on,
+        y=y_on,
         mode='markers',
         marker=dict(
-            color='white',
+            color='red',
             size=9,
             line=dict(color='black', width=1)
         ),
-        name='Outside Points'
+        name='On PPF'
     )
 )
+# Yellow markers: inside points
 fig_left.add_trace(
     go.Scatter(
         x=x_inside,
@@ -145,6 +156,20 @@ fig_left.add_trace(
             line=dict(color='black', width=1)
         ),
         name='Inside Points'
+    )
+)
+# White markers: outside points
+fig_left.add_trace(
+    go.Scatter(
+        x=x_outside,
+        y=y_outside,
+        mode='markers',
+        marker=dict(
+            color='white',
+            size=9,
+            line=dict(color='black', width=1)
+        ),
+        name='Outside Points'
     )
 )
 
@@ -162,7 +187,7 @@ fig_left.update_layout(
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
     width=700,
-    height=700,
+    height=500,
     margin=dict(l=20, r=20, t=20, b=20)
 )
 fig_left.update_xaxes(fixedrange=True)
@@ -251,7 +276,7 @@ fig_right.update_layout(
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
     width=700,
-    height=700,
+    height=500,
     margin=dict(l=20, r=20, t=20, b=20)
 )
 fig_right.update_xaxes(fixedrange=True)
