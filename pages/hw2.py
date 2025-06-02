@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 # ── Constants for slider maximums ────────────────────────────────────────────
 MAX_L   = 40
@@ -65,208 +64,198 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
         return 0.0
     return - (e_y * x_pt) / (e_x**2 * np.sqrt(inside))
 
-# ─── Title ───────────────────────────────────────────────────────────────────
-st.title("Fixed‐Axis PPF: Shared‐Axis Subplots")
 
-# ─── Initialize slider defaults in session_state ─────────────────────────────
-if "L" not in st.session_state:
-    st.session_state["L"] = 20
-if "e_x" not in st.session_state:
-    st.session_state["e_x"] = 10
-if "e_y" not in st.session_state:
-    st.session_state["e_y"] = 10
+# ─── Sidebar controls ─────────────────────────────────────────────────────────
+st.title("Fixed-Axis PPF with Split View: Data & Tangent (Square Panels)")
+st.sidebar.header("Settings")
 
-# Read current slider values from session_state
-L   = st.session_state["L"]
-e_x = st.session_state["e_x"]
-e_y = st.session_state["e_y"]
+L   = st.sidebar.slider("Total Labour (L)",        1, MAX_L,   20, step=1)
+e_x = st.sidebar.slider("Efficiency 🐸 (e_x)",      1, MAX_e_x, 10, step=1)
+e_y = st.sidebar.slider("Efficiency 🟠 (e_y)",      1, MAX_e_y, 10, step=1)
 
-# Generate PPF curve for current (L, e_x, e_y)
+# ─── Generate (cached) PPF curve for current sliders ───────────────────────
 x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 
-# Ensure x_move is initialized and clamped to [0, x_max]
-default_x_move = float(x_max / 2)
-if "x_move" not in st.session_state or st.session_state["x_move"] > x_max:
-    st.session_state["x_move"] = default_x_move
-x_move = st.session_state["x_move"]
-y_move = compute_ppf_y(x_move, e_x, e_y, L)
-
-# Generate random points globally once
+# ─── Generate (cached) random points over the GLOBAL rectangle ─────────────
 x_rand, y_rand = generate_random_points_global(num_points=30)
 
-# Determine which random points lie inside or outside the current PPF
+# Determine whether each random point is “inside” (below or on) the current PPF
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
 is_inside = (y_rand <= ppf_thresholds)
+
+# Split into two groups:
 x_inside  = x_rand[is_inside]
 y_inside  = y_rand[is_inside]
 x_outside = x_rand[~is_inside]
 y_outside = y_rand[~is_inside]
 
-# Compute tangent line at (x_move, y_move)
+# ─── “Moving” point on the frontier via slider ───────────────────────────────
+x_move = st.slider(
+    "Move a point along the frontier (🐸 axis)",
+    min_value=0.0,
+    max_value=float(x_max),
+    value=float(x_max / 2),
+    step=0.05
+)
+y_move = compute_ppf_y(x_move, e_x, e_y, L)
 slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
+
+# Prepare tangent-line x/y arrays
+# Extend tangent line over the entire x‐range [0, x_max].
 x_tan = np.linspace(0.0, x_max, 200)
 y_tan = slope_at_move * (x_tan - x_move) + y_move
 
-# ─── Build a single Plotly figure with two subplots (shared y‐axis) ─────────
-fig = make_subplots(
-    rows=1, cols=2,
-    shared_yaxes=True,
-    horizontal_spacing=0.05,
-    subplot_titles=("PPF & Random Points", "Moving Point + Tangent")
-)
+# ─── Layout: two columns ──────────────────────────────────────────────────────
+col1, col2 = st.columns(2)
 
-# --- Subplot 1 (row=1, col=1): PPF filled + random points --- #
-# 1a) PPF curve (filled to zero)
-fig.add_trace(
-    go.Scatter(
-        x=x_curve,
-        y=y_curve,
-        mode="lines",
-        fill="tozeroy",
-        line=dict(color="royalblue", width=2),
-        showlegend=False
-    ),
-    row=1, col=1
-)
+# Desired fixed size (square) for each chart:
+PLOT_WIDTH  = 550
+PLOT_HEIGHT = 550
 
-# 1b) Outside‐frontier points
-fig.add_trace(
-    go.Scatter(
-        x=x_outside,
-        y=y_outside,
-        mode="markers",
-        marker=dict(color="white", size=9, line=dict(color="black", width=1)),
-        name="Outside Points"
-    ),
-    row=1, col=1
-)
-
-# 1c) Inside‐frontier points
-fig.add_trace(
-    go.Scatter(
-        x=x_inside,
-        y=y_inside,
-        mode="markers",
-        marker=dict(color="yellow", size=9, line=dict(color="black", width=1)),
-        name="Inside Points"
-    ),
-    row=1, col=1
-)
-
-# --- Subplot 2 (row=1, col=2): PPF outline + moving point + tangent --- #
-# 2a) PPF curve line (no fill)
-fig.add_trace(
-    go.Scatter(
-        x=x_curve,
-        y=y_curve,
-        mode="lines",
-        line=dict(color="royalblue", width=2),
-        showlegend=False
-    ),
-    row=1, col=2
-)
-
-# 2b) Moving red point
-fig.add_trace(
-    go.Scatter(
-        x=[x_move],
-        y=[y_move],
-        mode="markers",
-        marker=dict(color="red", size=12, symbol="circle"),
-        name="Moving Point"
-    ),
-    row=1, col=2
-)
-
-# 2c) Tangent line
-fig.add_trace(
-    go.Scatter(
-        x=x_tan,
-        y=y_tan,
-        mode="lines",
-        line=dict(color="darkorange", width=2, dash="dash"),
-        name="Tangent Line"
-    ),
-    row=1, col=2
-)
-
-# ── Update axes for both subplots ────────────────────────────────────────────
-# Shared y‐axis appears on the left; hide duplicate y‐tick labels on the right
-fig.update_xaxes(
-    dict(
-        range=[0, GLOBAL_x_max * 1.02],
-        showgrid=False,
-        title_text="Units of 🐸"
-    ),
-    row=1, col=1
-)
-fig.update_yaxes(
-    dict(
-        range=[0, GLOBAL_y_max * 1.02],
-        showgrid=False,
-        title_text="Units of 🟠"
-    ),
-    row=1, col=1
-)
-fig.update_xaxes(
-    dict(
-        range=[0, GLOBAL_x_max * 1.02],
-        showgrid=False,
-        title_text="Units of 🐸"
-    ),
-    row=1, col=2
-)
-fig.update_yaxes(visible=False, row=1, col=2)  # hide right y‐axis ticks
-
-# ── Final layout tweaks ─────────────────────────────────────────────────────
-fig.update_layout(
-    plot_bgcolor="rgba(0,0,0,0)",
-    paper_bgcolor="rgba(0,0,0,0)",
-    width=1000,
-    height=550,
-    margin=dict(l=40, r=40, t=60, b=40)
-)
-
-# ─── Render the combined figure ──────────────────────────────────────────────
-st.plotly_chart(fig, use_container_width=False)
-
-# ─── Horizontal rule separating figure and sliders ─────────────────────────
-st.markdown("---")
-st.subheader("Adjust All Parameters")
-
-# ─── Sliders (below the graph) ──────────────────────────────────────────────
-# Note: Using `key=...` ties each slider directly to `st.session_state[...]`.
-col1, col2, col3, col4 = st.columns(4)
-
+# ─── Left Column: Static PPF + Points ────────────────────────────────────────
 with col1:
-    st.slider(
-        "Total Labour (L)",
-        min_value=1,
-        max_value=MAX_L,
-        key="L"
+    st.subheader("1) PPF Curve & Random Points")
+    fig_left = go.Figure()
+
+    # 1a) PPF curve (filled to zero)
+    fig_left.add_trace(
+        go.Scatter(
+            x=x_curve,
+            y=y_curve,
+            mode='lines',
+            fill='tozeroy',
+            line=dict(color='royalblue', width=2),
+            name='PPF Curve'
+        )
     )
 
+    # 1b) Points outside the frontier: white markers with black border
+    fig_left.add_trace(
+        go.Scatter(
+            x=x_outside,
+            y=y_outside,
+            mode='markers',
+            marker=dict(
+                color='white',
+                size=9,
+                line=dict(color='black', width=1)
+            ),
+            name='Outside Points'
+        )
+    )
+
+    # 1c) Points inside or on the frontier: yellow markers with black border
+    fig_left.add_trace(
+        go.Scatter(
+            x=x_inside,
+            y=y_inside,
+            mode='markers',
+            marker=dict(
+                color='yellow',
+                size=9,
+                line=dict(color='black', width=1)
+            ),
+            name='Inside Points'
+        )
+    )
+
+    # ── Layout tweaks (square axes) ─────────────────────────────────────────
+    fig_left.update_layout(
+        xaxis=dict(
+            range=[0, GLOBAL_x_max * 1.02],
+            showgrid=False,
+            title_text="Units of 🐸",
+            scaleanchor="y",      # lock aspect ratio
+            scaleratio=1         # ensures x and y scales match
+        ),
+        yaxis=dict(
+            range=[0, GLOBAL_y_max * 1.02],
+            showgrid=False,
+            title_text="Units of 🟠",
+        ),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=20, r=20, t=40, b=20),
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
+    )
+    fig_left.update_xaxes(fixedrange=True)
+    fig_left.update_yaxes(fixedrange=True)
+
+    # Render at fixed size (square)
+    st.plotly_chart(
+        fig_left,
+        use_container_width=False,
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
+    )
+
+
+# ─── Right Column: PPF + Moving Point + Tangent ─────────────────────────────
 with col2:
-    st.slider(
-        "Efficiency 🐸 (e_x)",
-        min_value=1,
-        max_value=MAX_e_x,
-        key="e_x"
+    st.subheader("2) Moving Point & Tangent Line")
+    fig_right = go.Figure()
+
+    # 2a) PPF curve (lines only, no fill)
+    fig_right.add_trace(
+        go.Scatter(
+            x=x_curve,
+            y=y_curve,
+            mode='lines',
+            line=dict(color='royalblue', width=2),
+            name='PPF Curve'
+        )
     )
 
-with col3:
-    st.slider(
-        "Efficiency 🟠 (e_y)",
-        min_value=1,
-        max_value=MAX_e_y,
-        key="e_y"
+    # 2b) The “moving” red point on the current frontier
+    fig_right.add_trace(
+        go.Scatter(
+            x=[x_move],
+            y=[y_move],
+            mode='markers',
+            marker=dict(color='red', size=12, symbol='circle'),
+            name='Moving Point'
+        )
     )
 
-with col4:
-    st.slider(
-        "Move a point along the frontier (🐸 axis)",
-        min_value=0.0,
-        max_value=float(x_max),
-        key="x_move",
-        step=0.05
+    # 2c) Tangent line at (x_move, y_move)
+    fig_right.add_trace(
+        go.Scatter(
+            x=x_tan,
+            y=y_tan,
+            mode='lines',
+            line=dict(color='darkorange', width=2, dash='dash'),
+            name='Tangent Line'
+        )
+    )
+
+    # ── Layout tweaks (square axes) ─────────────────────────────────────────
+    fig_right.update_layout(
+        xaxis=dict(
+            range=[0, GLOBAL_x_max * 1.02],
+            showgrid=False,
+            title_text="Units of 🐸",
+            scaleanchor="y",      # lock aspect ratio
+            scaleratio=1         # ensures x and y scales match
+        ),
+        yaxis=dict(
+            range=[0, GLOBAL_y_max * 1.02],
+            showgrid=False,
+            title_text="Units of 🟠",
+        ),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        margin=dict(l=20, r=20, t=40, b=20),
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
+    )
+    fig_right.update_xaxes(fixedrange=True)
+    fig_right.update_yaxes(fixedrange=True)
+
+    # Render at fixed size (square)
+    st.plotly_chart(
+        fig_right,
+        use_container_width=False,
+        width=PLOT_WIDTH,
+        height=PLOT_HEIGHT
     )
