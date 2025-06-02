@@ -6,42 +6,54 @@ import plotly.graph_objects as go
 st.title("Interactive Supply & Demand with Guaranteed On-Screen Equilibrium")
 
 # Base intercepts
-BASE_SUPPLY_INTERCEPT = 0.0   # Supply: P = Q + (0 + shift_s)
-BASE_DEMAND_INTERCEPT = 10.0  # Demand: P = –Q + (10 + shift_d)
+BASE_SUPPLY_INTERCEPT = 0.0   # Supply: P = Q + (0 + shift_supply)
+BASE_DEMAND_INTERCEPT = 10.0  # Demand: P = –Q + (10 + shift_demand)
 
 # ——————————————————————————————
-# Slider 1: Supply shift (s_s)
+# Slider 1: Supply shift (shift_supply)
 # Range: [-2, 2]
+# (Moved to bottom—placeholders here)
 # ——————————————————————————————
-shift_supply = st.slider(
-    label="Supply Shift (adds to base intercept 0)",
-    min_value=-2.0,
-    max_value=2.0,
-    value=0.0,
-    step=0.1,
-    key="shift_supply"
-)
+# shift_supply = st.slider(
+#     label="Supply Shift (adds to base intercept 0)",
+#     min_value=-2.0,
+#     max_value=2.0,
+#     value=0.0,
+#     step=0.1,
+#     key="shift_supply"
+# )
 
 # ——————————————————————————————
-# Slider 2: Demand shift (s_d)
+# Slider 2: Demand shift (shift_demand)
 # Range: [-2, 2]
+# (Moved to bottom—placeholders here)
 # ——————————————————————————————
-shift_demand = st.slider(
-    label="Demand Shift (adds to base intercept 10)",
-    min_value=-2.0,
-    max_value=2.0,
-    value=0.0,
-    step=0.1,
-    key="shift_demand"
-)
+# shift_demand = st.slider(
+#     label="Demand Shift (adds to base intercept 10)",
+#     min_value=-2.0,
+#     max_value=2.0,
+#     value=0.0,
+#     step=0.1,
+#     key="shift_demand"
+# )
+
+# Instead, just reserve keys for session_state
+if "shift_supply" not in st.session_state:
+    st.session_state.shift_supply = 0.0
+if "shift_demand" not in st.session_state:
+    st.session_state.shift_demand = 0.0
+
+# Retrieve shifts from session_state (defaults to 0.0)
+shift_supply = st.session_state.shift_supply
+shift_demand = st.session_state.shift_demand
 
 # Compute actual intercepts
-intercept_supply = BASE_SUPPLY_INTERCEPT + shift_supply    # b_s = 0 + s_s
-intercept_demand = BASE_DEMAND_INTERCEPT + shift_demand    # b_d = 10 + s_d
+intercept_supply = BASE_SUPPLY_INTERCEPT + shift_supply    # b_s = 0 + shift_supply
+intercept_demand = BASE_DEMAND_INTERCEPT + shift_demand    # b_d = 10 + shift_demand
 
 # Slopes
-slope_supply = 1    # Supply curve: P = Q + b_s
-slope_demand = -1   # Demand curve: P = -Q + b_d
+slope_supply = 1    # Supply: P = Q + b_s
+slope_demand = -1   # Demand: P = -Q + b_d
 
 # Q-range
 Q = np.linspace(0, 10, 200)
@@ -53,11 +65,16 @@ P_demand = slope_demand * Q + intercept_demand          # P_d = -Q + b_d
 # Compute intersection analytically:
 #   -Q_eq + b_d = Q_eq + b_s  => 2·Q_eq = b_d - b_s  =>  Q_eq = (b_d - b_s) / 2
 intersection_Q = (intercept_demand - intercept_supply) / 2
-#   P_eq = Q_eq + b_s  OR  P_eq = (b_d + b_s) / 2
+#   P_eq = (b_d + b_s) / 2
 intersection_P = (intercept_demand + intercept_supply) / 2
 
 # ——————————————————————————————
-# Build Plotly figure
+# Display equilibrium shifts in large font above the graph
+# ——————————————————————————————
+st.markdown(f"## Equilibrium Quantity: {intersection_Q:.2f}    |    Equilibrium Price: {intersection_P:.2f}")
+
+# ——————————————————————————————
+# Build Plotly figure (no background grid, fixed axes, no zoom)
 # ——————————————————————————————
 fig = go.Figure()
 
@@ -96,26 +113,24 @@ fig.add_trace(
     )
 )
 
-# Update layout: enforce fixed axes [0,10], disable zoom/pan
+# Update layout: remove grid, fix ranges, disable zoom/pan
 fig.update_layout(
     xaxis=dict(
         title="Quantity (Q)",
         range=[0, 10],
         fixedrange=True,
-        showgrid=True,
-        gridcolor="lightgray"
+        showgrid=False
     ),
     yaxis=dict(
         title="Price (P)",
         range=[0, 10],
         fixedrange=True,
-        showgrid=True,
-        gridcolor="lightgray"
+        showgrid=False
     ),
     width=600,
     height=600,
     legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05),
-    margin=dict(l=50, r=50, t=50, b=50),
+    margin=dict(l=50, r=50, t=20, b=20)
 )
 
 # Display the chart without interactive zooming
@@ -126,4 +141,25 @@ st.plotly_chart(
         "staticPlot": True,
         "displayModeBar": False
     }
+)
+
+# ——————————————————————————————
+# Sliders (moved to bottom)
+# ——————————————————————————————
+shift_supply = st.slider(
+    label="Supply Shift (adds to base intercept 0)",
+    min_value=-2.0,
+    max_value=2.0,
+    value=shift_supply,
+    step=0.1,
+    key="shift_supply"
+)
+
+shift_demand = st.slider(
+    label="Demand Shift (adds to base intercept 10)",
+    min_value=-2.0,
+    max_value=2.0,
+    value=shift_demand,
+    step=0.1,
+    key="shift_demand"
 )
