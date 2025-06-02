@@ -2,12 +2,13 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
-# Configure the Streamlit page to allow a wide layout
+# 1) Wide layout
 st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
 
-st.title("Side-by-Side Demand Curves with Linked Markers")
+st.title("Side-by-Side Demand Curves with Movable Left Marker")
 
-# Slider widget to control the x-position of the left red circle
+# ------------------------------------------------------------------------------
+# 2) Slider: controls the left‐hand point (and also the shift amount for the right)
 x_left = st.slider(
     label="Move Left Circle (Quantity)", 
     min_value=0.0, 
@@ -15,34 +16,48 @@ x_left = st.slider(
     value=2.5, 
     step=0.1
 )
-# Compute the corresponding y-position on the demand line y = -x + 5
+# The corresponding price on the original demand curve P = -Q + 5:
 y_left = -x_left + 5
 
-# For the right graph, shift the marker by a constant offset of 2.5
-constant_offset = 2.5
-x_right = x_left + constant_offset
-y_right = -x_right + 5  # Keep it on the same demand line
+# Compute the horizontal shift for the right‐hand curve.
+# Original "center" was at Q = 2.5.  Whenever x_left moves,
+# we set Δ = x_left - 2.5, and shift the right curve by Δ.
+delta = x_left - 2.5
 
-# Generate x (quantity) and y (price) values for the demand line (from 0 to 5)
+# ------------------------------------------------------------------------------
+# 3) Build a function that draws a demand curve plus a red marker.
+#    We will call it twice: once for the LEFT (no shift), once for the RIGHT (with shift).
+
+# Prepare 100 points in [0,5] for plotting.
 x_vals = np.linspace(0, 5, 100)
-y_vals = -x_vals + 5  # Demand: Price = -Q + 5
 
-def create_demand_figure(marker_x, marker_y, x_range_max, y_range_max):
+def create_shifted_demand_figure(shift: float, marker_x: float, marker_y: float, title: str):
+    """
+    - shift: how much to shift horizontally (positive = shift right, negative = shift left).
+             In practice, we implement P = - (Q - shift) + 5  <=>  P = -Q + (5 + shift).
+    - marker_x, marker_y: coordinates at which to draw the red circle (fixed).
+    - title: subtitle for the figure.
+    """
+    # Because shifting horizontally by `shift` is the same as raising the intercept from 5 to (5+shift):
+    intercept = 5.0 + shift
+    # New demand line: P = - x_vals + intercept
+    y_vals_shifted = -x_vals + intercept
+
     fig = go.Figure()
 
-    # Demand line (filled under the curve)
+    # 3a) Plot the (possibly shifted) demand line, filled under the curve:
     fig.add_trace(
         go.Scatter(
             x=x_vals,
-            y=y_vals,
+            y=y_vals_shifted,
             mode="lines",
             fill="tozeroy",
             line=dict(color="crimson"),
-            name="Demand: P = -Q + 5"
+            name=f"Demand (shifted) if Δ={shift:+.2f}"
         )
     )
 
-    # Red circle at the specified marker position
+    # 3b) Plot the red circle at (marker_x, marker_y):
     fig.add_trace(
         go.Scatter(
             x=[marker_x],
@@ -53,16 +68,17 @@ def create_demand_figure(marker_x, marker_y, x_range_max, y_range_max):
         )
     )
 
-    # Configure axes range and disable zoom/pan, set square dimensions
+    # 3c) Fix axes so they stay square, disable zoom/pan, etc.
     fig.update_layout(
+        title=title,
         xaxis=dict(
             title="Quantity Demanded",
-            range=[0, x_range_max],
+            range=[0, 5],
             fixedrange=True
         ),
         yaxis=dict(
             title="Price",
-            range=[0, y_range_max],
+            range=[0, 5],
             fixedrange=True
         ),
         width=400,
@@ -73,22 +89,41 @@ def create_demand_figure(marker_x, marker_y, x_range_max, y_range_max):
 
     return fig
 
-# Determine max axis range to accommodate the shifted marker (max possible x_right = 5 + 2.5 = 7.5)
-axis_max = 10
+# ------------------------------------------------------------------------------
+# 4) Create the two figures:
+#    - LEFT: shift = 0 (i.e. original demand) + moving marker (x_left, y_left)
+#    - RIGHT: shift = delta, but marker fixed at (2.5, 2.5)
 
-# Create two figures:
-# - Left: marker controlled by the slider
-# - Right: marker shifted by constant_offset + slider
-fig_left = create_demand_figure(x_left, y_left, x_range_max=axis_max, y_range_max=axis_max)
-fig_right = create_demand_figure(x_right, y_right, x_range_max=axis_max, y_range_max=axis_max)
+fig_left = create_shifted_demand_figure(
+    shift=0.0,
+    marker_x=x_left,
+    marker_y=y_left,
+    title="Left Curve (Movable Marker)"
+)
 
-# Place them side by side in two equal-width columns
+fig_right = create_shifted_demand_figure(
+    shift=delta,
+    marker_x=2.5,       # fixed
+    marker_y=2.5,       # fixed
+    title="Right Curve (Shifted Demand, Marker Fixed)"
+)
+
+# ------------------------------------------------------------------------------
+# 5) Put them side by side in two columns
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Left Curve (Movable Marker)")
-    st.plotly_chart(fig_left, use_container_width=False, config={"staticPlot": True}, key="demand_curve_left")
+    st.plotly_chart(
+        fig_left, 
+        use_container_width=False, 
+        config={"staticPlot": True}, 
+        key="demand_curve_left"
+    )
 
 with col2:
-    st.subheader("Right Curve (Shifted Marker)")
-    st.plotly_chart(fig_right, use_container_width=False, config={"staticPlot": True}, key="demand_curve_right")
+    st.plotly_chart(
+        fig_right, 
+        use_container_width=False, 
+        config={"staticPlot": True}, 
+        key="demand_curve_right"
+    )
