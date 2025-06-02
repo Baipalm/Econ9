@@ -1,7 +1,6 @@
 streamlit>=1.18.0
 plotly
 pandas
-altair
 zipfile
 io
 requests
