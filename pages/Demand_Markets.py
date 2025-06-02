@@ -130,13 +130,3 @@ fig.update_layout(
 
 st.plotly_chart(fig, use_container_width=True)
 
-# Explanation
-st.markdown("""
-**How to interpret:**  
-- The **left graph** shows the original (linear) demand curve \(P = -\tfrac{1}{2}Q + b\), where \(b = \tfrac{1}{2} \times \text{(max quantity)}\).  
-- Drag the **Left‐Market Price** slider up or down. As you change the price in the left market, the red dot moves along the blue demand curve (movement *along* the curve).  
-- The **right graph** dynamically shows a shift of the demand curve (green) in the second market, depending on whether the two markets are **complementary** or **substitute**.  
-  - If you choose **“Complementary”**, an increase in price in the left market shifts the right‐market demand curve *downward* (lower intercept), reducing demand at every price.  
-  - If you choose **“Substitute”**, an increase in price in the left market shifts the right‐market demand curve *upward* (higher intercept), increasing demand at every price.  
-- The orange dot in the right graph is plotted at the **same price** as the red dot on the left. It shows the new quantity demanded in the right market **after** the demand‐curve shift.  
-""")
