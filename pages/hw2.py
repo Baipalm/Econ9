@@ -7,7 +7,7 @@ MAX_L   = 40
 MAX_e_x = 20
 MAX_e_y = 20
 
-# Precompute the “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
+# Precompute “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
 GLOBAL_x_max = MAX_e_x * np.sqrt(MAX_L)   # ≈ 20 * √40
 GLOBAL_y_max = MAX_e_y * np.sqrt(MAX_L)   # ≈ 20 * √40
 
@@ -120,6 +120,7 @@ y_outside = y_rand[is_outside]
 # ─── First Graph: PPF Curve & Random Points ──────────────────────────────────
 fig_left = go.Figure()
 
+# PPF curve (blue line, filled)
 fig_left.add_trace(
     go.Scatter(
         x=x_curve,
@@ -130,7 +131,7 @@ fig_left.add_trace(
         name='PPF Curve'
     )
 )
-# Red markers: points exactly on the curve
+# Red markers: points exactly on the PPF
 fig_left.add_trace(
     go.Scatter(
         x=x_on,
@@ -193,9 +194,9 @@ fig_left.update_layout(
 fig_left.update_xaxes(fixedrange=True)
 fig_left.update_yaxes(fixedrange=True)
 
-st.plotly_chart(fig_left, use_container_width=False)
+st.plotly_chart(fig_left, use_container_width=False, config={'scrollZoom': False})
 
-# ─── Widgets Between Graphs (in two columns to reduce width) ────────────────
+# ─── Widgets for L, e_x, and e_y (between the two graphs) ────────────────────
 st.markdown("---")
 col_w1, col_w2 = st.columns(2)
 with col_w1:
@@ -224,19 +225,12 @@ with col_w2:
         step=1,
         key="e_y"
     )
-    st.slider(
-        "Move a point along the frontier (🐸 axis)",
-        min_value=0.0,
-        max_value=float(x_max),
-        value=st.session_state.x_move,
-        step=0.05,
-        key="x_move"
-    )
 st.markdown("---")
 
 # ─── Second Graph: Moving Point & Tangent Line ───────────────────────────────
 fig_right = go.Figure()
 
+# PPF curve (blue line)
 fig_right.add_trace(
     go.Scatter(
         x=x_curve,
@@ -246,6 +240,7 @@ fig_right.add_trace(
         name='PPF Curve'
     )
 )
+# Moving point (red dot)
 fig_right.add_trace(
     go.Scatter(
         x=[x_move],
@@ -255,6 +250,7 @@ fig_right.add_trace(
         name='Moving Point'
     )
 )
+# Tangent line (dashed orange)
 fig_right.add_trace(
     go.Scatter(
         x=x_tan,
@@ -295,4 +291,15 @@ fig_right.update_layout(
 fig_right.update_xaxes(fixedrange=True)
 fig_right.update_yaxes(fixedrange=True)
 
-st.plotly_chart(fig_right, use_container_width=False)
+st.plotly_chart(fig_right, use_container_width=False, config={'scrollZoom': False})
+
+# ─── “Move a point along the frontier” slider at the very bottom ─────────────
+st.markdown("---")
+st.slider(
+    "Move a point along the frontier (🐸 axis)",
+    min_value=0.0,
+    max_value=float(x_max),
+    value=st.session_state.x_move,
+    step=0.05,
+    key="x_move"
+)
