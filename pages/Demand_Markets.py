@@ -8,7 +8,7 @@ st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
 st.title("Side-by-Side Demand Curves with Movable Left Marker")
 
 # ------------------------------------------------------------------------------
-# 2) Slider: controls the left‐hand point (and also the shift amount for the right)
+# 2) Slider: controls the left‐hand point (and also gives Δ for the right‐hand point).
 x_left = st.slider(
     label="Move Left Circle (Quantity)", 
     min_value=0.0, 
@@ -19,41 +19,26 @@ x_left = st.slider(
 # The corresponding price on the original demand curve P = -Q + 5:
 y_left = -x_left + 5
 
-# Compute the horizontal shift for the right‐hand curve.
-# Original "center" was at Q = 2.5.  Whenever x_left moves,
-# we set Δ = x_left - 2.5, and shift the right curve by Δ.
+# Compute horizontal “shift” Δ relative to the center Q = 2.5
 delta = x_left - 2.5
 
 # ------------------------------------------------------------------------------
-# 3) Build a function that draws a demand curve plus a red marker.
-#    We will call it twice: once for the LEFT (no shift), once for the RIGHT (with shift).
-
-# Prepare 100 points in [0,5] for plotting.
+# 3) Helper that plots the demand curve P = -Q + 5 plus a red dot at (marker_x, marker_y).
 x_vals = np.linspace(0, 5, 100)
+y_vals = -x_vals + 5  # Original demand curve (no shift)
 
-def create_shifted_demand_figure(shift: float, marker_x: float, marker_y: float, title: str):
-    """
-    - shift: how much to shift horizontally (positive = shift right, negative = shift left).
-             In practice, we implement P = - (Q - shift) + 5  <=>  P = -Q + (5 + shift).
-    - marker_x, marker_y: coordinates at which to draw the red circle (fixed).
-    - title: subtitle for the figure.
-    """
-    # Because shifting horizontally by `shift` is the same as raising the intercept from 5 to (5+shift):
-    intercept = 5.0 + shift
-    # New demand line: P = - x_vals + intercept
-    y_vals_shifted = -x_vals + intercept
-
+def create_demand_figure(marker_x: float, marker_y: float, title: str):
     fig = go.Figure()
 
-    # 3a) Plot the (possibly shifted) demand line, filled under the curve:
+    # 3a) Plot the original demand line, filled under the curve:
     fig.add_trace(
         go.Scatter(
             x=x_vals,
-            y=y_vals_shifted,
+            y=y_vals,
             mode="lines",
             fill="tozeroy",
             line=dict(color="crimson"),
-            name=f"Demand (shifted) if Δ={shift:+.2f}"
+            name="Demand: P = -Q + 5"
         )
     )
 
@@ -86,30 +71,32 @@ def create_shifted_demand_figure(shift: float, marker_x: float, marker_y: float,
         margin=dict(l=40, r=40, t=40, b=40),
         showlegend=False
     )
-
     return fig
 
 # ------------------------------------------------------------------------------
-# 4) Create the two figures:
-#    - LEFT: shift = 0 (i.e. original demand) + moving marker (x_left, y_left)
-#    - RIGHT: shift = delta, but marker fixed at (2.5, 2.5)
+# 4) Build the two figures:
 
-fig_left = create_shifted_demand_figure(
-    shift=0.0,
+# LEFT: marker moves along P = -Q + 5 at (x_left, y_left)
+fig_left = create_demand_figure(
     marker_x=x_left,
     marker_y=y_left,
-    title="Left Curve (Movable Marker)"
+    title="Left Curve (Movable Marker on P = -Q + 5)"
 )
 
-fig_right = create_shifted_demand_figure(
-    shift=delta,
-    marker_x=2.5,       # fixed
-    marker_y=2.5,       # fixed
-    title="Right Curve (Shifted Demand, Marker Fixed)"
+# RIGHT: demand curve stays P = -Q + 5, but the red dot sits at Q=2.5 and 
+#         its price is y_right = 2.5 + Δ, so it “lies on” the shifted curve.
+x_right = 2.5
+y_right = 2.5 + delta
+
+fig_right = create_demand_figure(
+    marker_x=x_right,
+    marker_y=y_right,
+    title="Right Curve (Fixed Demand, Marker Shifts Up)"
 )
 
 # ------------------------------------------------------------------------------
-# 5) Put them side by side in two columns
+# 5) Display side by side
+
 col1, col2 = st.columns(2)
 
 with col1:
