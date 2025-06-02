@@ -1,5 +1,6 @@
 streamlit>=1.18.0
 plotly
 pandas
+requests
 orjson 
 
