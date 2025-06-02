@@ -99,7 +99,7 @@ fig_left.add_trace(
         y=y_near,
         mode='markers',
         marker=dict(color='red', size=9, line=dict(color='black', width=1)),
-        name=f'Near Curve (≤ {tolerance})'
+        name=f'Efficient (≤ {tolerance})'
     )
 )
 fig_left.add_trace(
@@ -108,7 +108,7 @@ fig_left.add_trace(
         y=y_inside,
         mode='markers',
         marker=dict(color='yellow', size=9, line=dict(color='black', width=1)),
-        name='Inside (> 2 units)'
+        name='Inefficent (> 2 units)'
     )
 )
 fig_left.add_trace(
@@ -117,7 +117,7 @@ fig_left.add_trace(
         y=y_outside,
         mode='markers',
         marker=dict(color='white', size=9, line=dict(color='black', width=1)),
-        name='Outside'
+        name='Impossible'
     )
 )
 
