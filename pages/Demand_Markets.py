@@ -3,27 +3,27 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Configure the Streamlit page
-st.set_page_config(page_title="Price vs. Quantity Demanded", layout="centered")
+st.set_page_config(page_title="Linear Demand Curve", layout="centered")
 
-st.title("Price vs. Quantity Demanded")
+st.title("Linear Demand Curve")
 
-# Generate x and y values
+# Generate x (quantity) and y (price) values for a downward‐sloping demand line
 x = np.linspace(0, 10, 100)
-y = -x / 2 + 5
+y = -x + 10  # Demand: Price = -Quantity + 10
 
-# Create Plotly figure with filled area under the curve
+# Create Plotly figure with the area under the demand curve filled
 fig = go.Figure(
     data=go.Scatter(
         x=x,
         y=y,
         mode="lines",
-        fill="tozeroy",
-        line=dict(color="royalblue"),
-        name="Price =Quantity/2 + 5"
+        fill="tozeroy",               # fills area down to y=0
+        line=dict(color="crimson"),
+        name="Demand: P = -Q + 10"
     )
 )
 
-# Configure axes range and disable zoom/pan
+# Configure axes range and disable zoom/pan for a fixed, symmetric view
 fig.update_layout(
     xaxis=dict(
         title="Quantity Demanded",
