@@ -6,33 +6,34 @@ import plotly.graph_objects as go
 st.title("Interactive Supply & Demand with Guaranteed On-Screen Equilibrium")
 
 # ——————————————————————————————
-# Slider 1: Supply intercept (b_s)
+# Slider 1: Raw supply intercept (b_s_raw)
 # Range: 0 to 10
 # ——————————————————————————————
-intercept_supply = st.slider(
-    label="Supply Intercept (P = Q + intercept_supply)",
+b_s_raw = st.slider(
+    label="Raw Supply Intercept (P = Q + b_s)",
     min_value=0.0,
     max_value=10.0,
     value=2.0,
     step=0.5,
-    key="intercept_supply"
+    key="b_s_raw"
 )
 
 # ——————————————————————————————
-# Slider 2: Demand intercept (b_d)
-# Range: [intercept_supply, 10]
-# This ensures b_d ≥ b_s so that Q_eq ≥ 0,
-# and b_d + b_s ≤ 20 automatically (since both ≤10),
-# so P_eq = (b_d + b_s)/2 ≤ 10.
+# Slider 2: Raw demand intercept (b_d_raw)
+# Range: 0 to 10
 # ——————————————————————————————
-intercept_demand = st.slider(
-    label="Demand Intercept (P = -Q + intercept_demand)",
-    min_value=intercept_supply,
+b_d_raw = st.slider(
+    label="Raw Demand Intercept (P = -Q + b_d)",
+    min_value=0.0,
     max_value=10.0,
-    value=max(8.0, intercept_supply),
+    value=8.0,
     step=0.5,
-    key="intercept_demand"
+    key="b_d_raw"
 )
+
+# Enforce intercept_demand ≥ intercept_supply to keep equilibrium Q ≥ 0
+intercept_supply = b_s_raw
+intercept_demand = max(b_d_raw, intercept_supply)
 
 # Fixed slopes
 slope_supply = 1    # Supply: P = Q + b_s
@@ -47,7 +48,7 @@ P_demand = slope_demand * Q + intercept_demand
 
 # Compute equilibrium analytically:
 #   -Q_eq + b_d = Q_eq + b_s  → 2·Q_eq = b_d − b_s  →  Q_eq = (b_d − b_s) / 2
-#   P_eq = Q_eq + b_s  or  P_eq = (b_d + b_s)/2
+#   P_eq = (b_d + b_s)/2
 intersection_Q = (intercept_demand - intercept_supply) / 2
 intersection_P = (intercept_demand + intercept_supply) / 2
 
