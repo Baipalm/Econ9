@@ -5,15 +5,18 @@ import plotly.graph_objects as go
 # Configure the Streamlit page to allow a wide layout
 st.set_page_config(page_title="Side-by-Side Demand Curves", layout="wide")
 
-st.title("Side-by-Side Demand Curves with Square Dimensions")
+st.title("Side-by-Side Demand Curves with Center Markers")
 
 # Generate x (quantity) and y (price) values for a downward‐sloping demand line
 x = np.linspace(0, 5, 100)
 y = -x + 5  # Demand: Price = -Quantity + 5
 
 def create_demand_figure():
-    fig = go.Figure(
-        data=go.Scatter(
+    fig = go.Figure()
+
+    # Demand line
+    fig.add_trace(
+        go.Scatter(
             x=x,
             y=y,
             mode="lines",
@@ -22,6 +25,18 @@ def create_demand_figure():
             name="Demand: P = -Q + 5"
         )
     )
+
+    # Red circle at the midpoint (2.5, 2.5)
+    fig.add_trace(
+        go.Scatter(
+            x=[2.5],
+            y=[2.5],
+            mode="markers",
+            marker=dict(color="red", size=12),
+            showlegend=False
+        )
+    )
+
     # Configure axes range and disable zoom/pan, set square dimensions
     fig.update_layout(
         xaxis=dict(
