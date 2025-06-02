@@ -86,8 +86,8 @@ def create_left_figure(marker_x: float, marker_y: float):
     )
     fig.update_layout(
         title="Left Curve (Movable Marker)",
-        xaxis=dict(title="Quantity Demanded", range=[0, 5], fixedrange=True),
-        yaxis=dict(title="Price",           range=[0, 5], fixedrange=True),
+        xaxis=dict(title="Quantity Demanded", range=[0, 10], fixedrange=True),
+        yaxis=dict(title="Price",           range=[0, 10], fixedrange=True),
         width=400,
         height=400,
         margin=dict(l=40, r=40, t=40, b=40),
@@ -131,8 +131,8 @@ def create_right_figure(vertical_shift: float):
     )
     fig.update_layout(
         title="Right Curve (Shifted Vertically)",
-        xaxis=dict(title="Quantity Demanded", range=[0, 5], fixedrange=True),
-        yaxis=dict(title="Price",           range=[0, 5], fixedrange=True),
+        xaxis=dict(title="Quantity Demanded", range=[0, 10], fixedrange=True),
+        yaxis=dict(title="Price",           range=[0, 10], fixedrange=True),
         width=400,
         height=400,
         margin=dict(l=40, r=40, t=40, b=40),
