@@ -80,16 +80,6 @@ y_inside  = y_rand[is_inside]
 x_outside = x_rand[is_outside]
 y_outside = y_rand[is_outside]
 
-# ─── Sliders for L, e_x, e_y ──────────────────────────────────────────────────
-col1, col2 = st.columns(2)
-with col1:
-    st.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
-    st.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
-with col2:
-    st.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
-
-st.markdown("---")
-
 # ─── Left Figure: PPF + Random Points ────────────────────────────────────────
 fig_left = go.Figure()
 
@@ -147,10 +137,27 @@ fig_left.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     width=700,
     height=500,
-    margin=dict(l=20, r=20, t=20, b=20)
+    margin=dict(l=20, r=20, t=20, b=20),
+    dragmode=False   # Disable all drag interactions
 )
-# Allow panning/zooming by not fixing the range
-fig_left.update_xaxes(fixedrange=False)
-fig_left.update_yaxes(fixedrange=False)
 
-st.plotly_chart(fig_left, use_container_width=False)
+# Disable zooming/scrolling by fixing both axes
+fig_left.update_xaxes(fixedrange=True)
+fig_left.update_yaxes(fixedrange=True)
+
+# Render as a static plot (no zooming, panning, or scrolling)
+st.plotly_chart(
+    fig_left,
+    use_container_width=False,
+    config={'staticPlot': True}
+)
+
+st.markdown("---")
+
+# ─── Sliders for L, e_x, e_y (at the bottom) ────────────────────────────────
+col1, col2 = st.columns(2)
+with col1:
+    st.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
+    st.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
+with col2:
+    st.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
