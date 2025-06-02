@@ -2,6 +2,9 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
+# Configure the Streamlit page
+st.set_page_config(page_title="Price vs. Quantity Demanded", layout="centered")
+
 st.title("Price vs. Quantity Demanded")
 
 # Generate x and y values
@@ -36,6 +39,5 @@ fig.update_layout(
     showlegend=False
 )
 
-# Disable all interactivity (no scroll, no zoom, no pan)
+# Render the figure to the Streamlit app (the website)
 st.plotly_chart(fig, use_container_width=True, config={"staticPlot": True})
-
