@@ -65,54 +65,52 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
     return - (e_y * x_pt) / (e_x**2 * np.sqrt(inside))
 
 
-# ─── Sidebar controls ─────────────────────────────────────────────────────────
-st.title("Fixed-Axis PPF with Split View: Data & Tangent (Square Panels)")
-st.sidebar.header("Settings")
+st.title("Fixed-Axis PPF with Split View: Data & Tangent (Widgets Below)")
 
-L   = st.sidebar.slider("Total Labour (L)",        1, MAX_L,   20, step=1)
-e_x = st.sidebar.slider("Efficiency 🐸 (e_x)",      1, MAX_e_x, 10, step=1)
-e_y = st.sidebar.slider("Efficiency 🟠 (e_y)",      1, MAX_e_y, 10, step=1)
+# ─── Session State Initialization ────────────────────────────────────────────
+if 'L' not in st.session_state:
+    st.session_state.L = 20
+if 'e_x' not in st.session_state:
+    st.session_state.e_x = 10
+if 'e_y' not in st.session_state:
+    st.session_state.e_y = 10
 
-# ─── Generate (cached) PPF curve for current sliders ───────────────────────
+# Retrieve current slider values (will be updated at the bottom)
+L   = st.session_state.L
+e_x = st.session_state.e_x
+e_y = st.session_state.e_y
+
+# Generate the current PPF curve
 x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 
-# ─── Generate (cached) random points over the GLOBAL rectangle ─────────────
-x_rand, y_rand = generate_random_points_global(num_points=30)
+# Ensure 'x_move' exists in session_state and clamp to [0, x_max]
+if 'x_move' not in st.session_state:
+    st.session_state.x_move = float(x_max) / 2.0
+# Clamp if previous x_move exceeds new x_max
+if st.session_state.x_move > x_max:
+    st.session_state.x_move = float(x_max)
+x_move = float(st.session_state.x_move)
 
-# Determine whether each random point is “inside” (below or on) the current PPF
+# Compute the “moving” point’s y‐coordinate and tangent slope
+y_move = compute_ppf_y(x_move, e_x, e_y, L)
+slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
+
+# Prepare tangent‐line x/y arrays (over [0, x_max])
+x_tan = np.linspace(0.0, x_max, 200)
+y_tan = slope_at_move * (x_tan - x_move) + y_move
+
+# Generate random points over the GLOBAL rectangle and classify inside/outside
+x_rand, y_rand = generate_random_points_global(num_points=30)
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
 is_inside = (y_rand <= ppf_thresholds)
-
-# Split into two groups:
 x_inside  = x_rand[is_inside]
 y_inside  = y_rand[is_inside]
 x_outside = x_rand[~is_inside]
 y_outside = y_rand[~is_inside]
 
-# ─── “Moving” point on the frontier via slider ───────────────────────────────
-x_move = st.slider(
-    "Move a point along the frontier (🐸 axis)",
-    min_value=0.0,
-    max_value=float(x_max),
-    value=float(x_max / 2),
-    step=0.05
-)
-y_move = compute_ppf_y(x_move, e_x, e_y, L)
-slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
-
-# Prepare tangent-line x/y arrays
-# Extend tangent line over the entire x‐range [0, x_max].
-x_tan = np.linspace(0.0, x_max, 200)
-y_tan = slope_at_move * (x_tan - x_move) + y_move
-
-# ─── Layout: two columns ──────────────────────────────────────────────────────
+# ─── Layout: Two columns with larger, square‐sized graphs ────────────────────
 col1, col2 = st.columns(2)
 
-# Desired fixed size (square) for each chart:
-PLOT_WIDTH  = 550
-PLOT_HEIGHT = 550
-
-# ─── Left Column: Static PPF + Points ────────────────────────────────────────
 with col1:
     st.subheader("1) PPF Curve & Random Points")
     fig_left = go.Figure()
@@ -129,7 +127,7 @@ with col1:
         )
     )
 
-    # 1b) Points outside the frontier: white markers with black border
+    # 1b) Points outside the frontier
     fig_left.add_trace(
         go.Scatter(
             x=x_outside,
@@ -144,7 +142,7 @@ with col1:
         )
     )
 
-    # 1c) Points inside or on the frontier: yellow markers with black border
+    # 1c) Points inside or on the frontier
     fig_left.add_trace(
         go.Scatter(
             x=x_inside,
@@ -159,14 +157,12 @@ with col1:
         )
     )
 
-    # ── Layout tweaks (square axes) ─────────────────────────────────────────
+    # ── Layout tweaks for a larger square plot ─────────────────────────────
     fig_left.update_layout(
         xaxis=dict(
             range=[0, GLOBAL_x_max * 1.02],
             showgrid=False,
             title_text="Units of 🐸",
-            scaleanchor="y",      # lock aspect ratio
-            scaleratio=1         # ensures x and y scales match
         ),
         yaxis=dict(
             range=[0, GLOBAL_y_max * 1.02],
@@ -175,28 +171,21 @@ with col1:
         ),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=20, r=20, t=40, b=20),
-        width=PLOT_WIDTH,
-        height=PLOT_HEIGHT
+        width=700,
+        height=700,
+        margin=dict(l=20, r=20, t=40, b=20)
     )
     fig_left.update_xaxes(fixedrange=True)
     fig_left.update_yaxes(fixedrange=True)
 
-    # Render at fixed size (square)
-    st.plotly_chart(
-        fig_left,
-        use_container_width=False,
-        width=PLOT_WIDTH,
-        height=PLOT_HEIGHT
-    )
+    # Explicitly disable container-width so it stays square
+    st.plotly_chart(fig_left, use_container_width=False)
 
-
-# ─── Right Column: PPF + Moving Point + Tangent ─────────────────────────────
 with col2:
     st.subheader("2) Moving Point & Tangent Line")
     fig_right = go.Figure()
 
-    # 2a) PPF curve (lines only, no fill)
+    # 2a) PPF curve (lines only)
     fig_right.add_trace(
         go.Scatter(
             x=x_curve,
@@ -207,7 +196,7 @@ with col2:
         )
     )
 
-    # 2b) The “moving” red point on the current frontier
+    # 2b) The “moving” red point
     fig_right.add_trace(
         go.Scatter(
             x=[x_move],
@@ -229,14 +218,12 @@ with col2:
         )
     )
 
-    # ── Layout tweaks (square axes) ─────────────────────────────────────────
+    # ── Layout tweaks for a larger square plot ─────────────────────────────
     fig_right.update_layout(
         xaxis=dict(
             range=[0, GLOBAL_x_max * 1.02],
             showgrid=False,
             title_text="Units of 🐸",
-            scaleanchor="y",      # lock aspect ratio
-            scaleratio=1         # ensures x and y scales match
         ),
         yaxis=dict(
             range=[0, GLOBAL_y_max * 1.02],
@@ -245,17 +232,49 @@ with col2:
         ),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=20, r=20, t=40, b=20),
-        width=PLOT_WIDTH,
-        height=PLOT_HEIGHT
+        width=700,
+        height=700,
+        margin=dict(l=20, r=20, t=40, b=20)
     )
     fig_right.update_xaxes(fixedrange=True)
     fig_right.update_yaxes(fixedrange=True)
 
-    # Render at fixed size (square)
-    st.plotly_chart(
-        fig_right,
-        use_container_width=False,
-        width=PLOT_WIDTH,
-        height=PLOT_HEIGHT
-    )
+    st.plotly_chart(fig_right, use_container_width=False)
+
+st.markdown("---")  # Separator before the widgets
+
+# ─── Sliders at the Bottom ───────────────────────────────────────────────────
+st.subheader("Adjust Parameters")
+st.slider(
+    "Total Labour (L)",
+    min_value=1,
+    max_value=MAX_L,
+    value=st.session_state.L,
+    step=1,
+    key="L"
+)
+st.slider(
+    "Efficiency 🐸 (e_x)",
+    min_value=1,
+    max_value=MAX_e_x,
+    value=st.session_state.e_x,
+    step=1,
+    key="e_x"
+)
+st.slider(
+    "Efficiency 🟠 (e_y)",
+    min_value=1,
+    max_value=MAX_e_y,
+    value=st.session_state.e_y,
+    step=1,
+    key="e_y"
+)
+
+st.slider(
+    "Move a point along the frontier (🐸 axis)",
+    min_value=0.0,
+    max_value=float(x_max),
+    value=st.session_state.x_move,
+    step=0.05,
+    key="x_move"
+)
