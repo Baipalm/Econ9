@@ -1,107 +1,119 @@
 import streamlit as st
-import plotly.express as exp
-import plotly.graph_objects as go
 import numpy as np
-#import matplotlib.pyplot as plt 
-#import plotly.tools as tls
-import pandas as pd
-#import altair as alt
+import plotly.graph_objects as go
 
-def frogs_to_oranges(frogs,e_x,e_y,L):
-        oranges_squared = e_y**2 * ( L - (frogs / e_x)**2 )
-        oranges_squared[ oranges_squared <= 0 ] = 0
-        oranges = np.sqrt(oranges_squared)
-        return oranges
-        
-        
-st.title("Production Possibility Curves")
-st.sidebar.header("Settings")
-L = st.sidebar.slider("Labour", min_value=1, max_value=40, value=20, step=1)
-st.sidebar.subheader("Production Efficiency")
-e_x = st.sidebar.slider("🐸", 1, 20, 10, step=1)
-e_y = st.sidebar.slider("🟠", 1, 20, 10, step=1)
-
-max_frogs = np.sqrt(40)*20
-frogs = np.arange(0, max_frogs, 0.05)
-np.append(frogs,e_x*np.sqrt(L))
-oranges = frogs_to_oranges(frogs,e_x,e_y,L)
-np.append(oranges,0)
-x_point = st.slider("Move the point along the curve", min_value=float(0), max_value=float(e_x*np.sqrt(L)), value=np.sqrt(40)*10, step=0.05)
-y_point = frogs_to_oranges(x_point,e_x,e_y,L)
-
-# Create tangent line (x range centered at x_point)
-tangent_x = np.linspace(x_point - 10, x_point + 10, 100)
-h= 1e-5
-tangent_y = (frogs_to_oranges(x_point + h,e_x,e_y,L) - frogs_to_oranges(x_point - h,e_x,e_y,L)) / (2 * h) * (tangent_x - x_point) + y_point
-
-data = np.hstack((frogs,oranges))
-df = pd.DataFrame({
-        'x': frogs,
-        'y': oranges
-    })
-#def abline(slope, intercept):
-#    """Plot a line from slope and intercept"""
-#    axes = plt.gca()
-#    x_vals = np.array(axes.get_xlim())
-#    y_vals = intercept + slope * x_vals
-#    plt.plot(x_vals, y_vals, '--')
-#chart = alt.Chart(df).mark_line().encode(
-#    alt.X('x:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🐸'),
-#    alt.Y('y:Q', scale=alt.Scale(domain=[0, max_frogs*1.01]), title='🟠'),
-#)
-#x = st.slider("movement along the curve", min_value=0, max_value=max_frogs, value=10, step=0.05)
-#slope = oranges/x
-#fig_mpl = abline(slope,intercept)
-#st.altair_chart(chart.properties(width=600, height=600),use_container_width=True) 
-fig = go.Figure()
-fig.update_layout(
-    xaxis=dict(range=[0, 130]),  # Set x-axis range from 0 to 6
-    yaxis=dict(range=[0, 130])   # Set y-axis range from 5 to 20
-)
-fig.update_layout(
-    xaxis_title="Units of 🐸 ",
-    yaxis_title="Units of 🟠"
-)
-fig.add_trace(
-        go.Scatter(x=df['x'], y=df['y'],mode='lines', fill='tozeroy')
-)
-
-fig.add_trace(go.Scatter(
-    x=[x_point],
-    y=[y_point],
-    mode='markers',
-    name='Moving Point',
-    marker=dict(color='red', size=15, symbol='circle')
-))
-fig.add_trace(go.Scatter(
+@st.cache_data
+def generate_curve_and_samples(e_x: int, e_y: int, L: int, num_curve_pts: int = 500, num_samples: int = 10):
+    """
+    Returns:
+      - x_curve, y_curve: arrays of length (num_curve_pts + 2), 
+          with endpoints (0, y_max) and (x_max, 0) included.
+      - x_samples, y_samples: `num_samples` points strictly between 0 and x_max.
+    These will be cached until e_x, e_y, or L change.
+    """
+    # Compute max‐values where curve hits axes
+    x_max = e_x * np.sqrt(L)
+    y_max = e_y * np.sqrt(L)
     
-    mode='lines',
-    name='Moving Point',
-    marker=dict(color='red', size=10, symbol='circle')
-))
-fig.add_trace(go.Scatter(
-    x=tangent_x,
-    y=tangent_y,
-    mode='lines',
-    name='Tangent Line',
-    line=dict(color='red', dash='dash')
-))
+    # Dense points along [0, x_max]
+    x_dense = np.linspace(0.0, x_max, num_curve_pts)
+    inside = L - (x_dense / e_x) ** 2
+    inside[inside < 0] = 0
+    y_dense = e_y * np.sqrt(inside)
+    
+    # Prepend (0, y_max) and append (x_max, 0)
+    x_curve = np.concatenate(([0.0], x_dense, [x_max]))
+    y_curve = np.concatenate(([y_max], y_dense, [0.0]))
+    
+    # Equally‐spaced interior sample points
+    x_samples = np.linspace(
+        x_max / (num_samples + 1),
+        x_max * num_samples / (num_samples + 1),
+        num_samples
+    )
+    inside_samp = L - (x_samples / e_x) ** 2
+    inside_samp[inside_samp < 0] = 0
+    y_samples = e_y * np.sqrt(inside_samp)
+    
+    return x_curve, y_curve, x_samples, y_samples, x_max, y_max
 
-fig.update_yaxes(fixedrange=True)
+def compute_y_single(x: float, e_x: int, e_y: int, L: int) -> float:
+    """
+    Compute y = e_y * sqrt(L - (x/e_x)^2) for a single x,
+    returning 0 if inside‐sqrt is negative.
+    """
+    inside = L - (x / e_x)**2
+    return float(e_y * np.sqrt(max(inside, 0.0)))
+
+# ─── Sidebar controls ─────────────────────────────────────────────────────────
+st.title("Production Possibility Frontier (PPF) with Caching")
+st.sidebar.header("Settings")
+
+L   = st.sidebar.slider("Total Labour (L)",        1, 40, 20, step=1)
+e_x = st.sidebar.slider("Efficiency 🐸 (e_x)",      1, 20, 10, step=1)
+e_y = st.sidebar.slider("Efficiency 🟠 (e_y)",      1, 20, 10, step=1)
+
+# ─── Generate (and cache) curve + samples ────────────────────────────────────
+x_curve, y_curve, x_samples, y_samples, x_max, y_max = generate_curve_and_samples(e_x, e_y, L)
+
+# ─── A “moving” point chosen via a slider ───────────────────────────────────
+x_move = st.slider(
+    "Move a point along the frontier (adjust 🐸)",
+    min_value=0.0,
+    max_value=float(x_max),
+    value=float(x_max / 2),
+    step=0.05
+)
+y_move = compute_y_single(x_move, e_x, e_y, L)
+
+# ─── Build the Plotly figure ────────────────────────────────────────────────
+fig = go.Figure()
+
+# 1) PPF curve, filled down to zero
+fig.add_trace(
+    go.Scatter(
+        x=x_curve,
+        y=y_curve,
+        mode='lines',
+        fill='tozeroy',
+        line=dict(color='royalblue'),
+        name='PPC Curve'
+    )
+)
+
+# 2) Scatter the interior data points (black dots)
+fig.add_trace(
+    go.Scatter(
+        x=x_samples,
+        y=y_samples,
+        mode='markers',
+        marker=dict(color='black', size=8),
+        name='Sampled Data Points'
+    )
+)
+
+# 3) The “moving” red point
+fig.add_trace(
+    go.Scatter(
+        x=[x_move],
+        y=[y_move],
+        mode='markers',
+        marker=dict(color='red', size=12, symbol='circle'),
+        name='Moving Point'
+    )
+)
+
+# ─── Layout tweaks ──────────────────────────────────────────────────────────
+fig.update_layout(
+    xaxis=dict(range=[0, x_max * 1.05]),
+    yaxis=dict(range=[0, y_max * 1.05]),
+    xaxis_title="Units of 🐸",
+    yaxis_title="Units of 🟠",
+    width=600,
+    height=600
+)
 fig.update_xaxes(fixedrange=True)
-#fig.update_traces(
-#    text=[f'🐸: {x_val}, 🟠: {y_val}' for x_val, y_val in zip(frogs, oranges)],
-#    hovertemplate="<b>%{text}</b><extra></extra>"
-#)
+fig.update_yaxes(fixedrange=True)
 
-fig.update_layout(width=400, height=400)
-#fig = plotly.line(x=frogs,y=oranges)
-#fig= go.Figure(data = [trace1,trace2],layout_xaxis_range=[0,np.sqrt(40)*20*1.1],layout_yaxis_range=[0,np.sqrt(40)*20*1.1])
-
-st.plotly_chart(fig, use_container_width=True, selection_mode=('points'))
-#st.line_chart(oranges, x_label="🐸", y_label="🟠",use_container_width=True)
-
-  
-
-
-
+# ─── Render the chart ───────────────────────────────────────────────────────
+st.plotly_chart(fig, use_container_width=True)
