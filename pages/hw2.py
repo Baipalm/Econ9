@@ -110,8 +110,8 @@ is_inside = (y_rand < ppf_thresholds) & (~is_on_curve)
 # Points outside
 is_outside = y_rand > ppf_thresholds
 
-x_on    = x_rand[is_on_curve]
-y_on    = y_rand[is_on_curve]
+x_on      = x_rand[is_on_curve]
+y_on      = y_rand[is_on_curve]
 x_inside  = x_rand[is_inside]
 y_inside  = y_rand[is_inside]
 x_outside = x_rand[is_outside]
@@ -173,6 +173,8 @@ fig_left.add_trace(
     )
 )
 
+# Annotate number of on-curve points in the top-right of the first graph
+num_on_points = len(x_on)
 fig_left.update_layout(
     xaxis=dict(
         range=[0, GLOBAL_x_max * 1.02],
@@ -188,47 +190,59 @@ fig_left.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     width=700,
     height=500,
-    margin=dict(l=20, r=20, t=20, b=20)
+    margin=dict(l=20, r=20, t=20, b=20),
+    annotations=[
+        dict(
+            x=0.95, y=0.95,
+            xref='paper', yref='paper',
+            text=f"{num_on_points} on-curve",
+            showarrow=False,
+            font=dict(size=18, color="red")
+        )
+    ]
 )
 fig_left.update_xaxes(fixedrange=True)
 fig_left.update_yaxes(fixedrange=True)
 
 st.plotly_chart(fig_left, use_container_width=False)
 
-# ─── Widgets Between Graphs ───────────────────────────────────────────────────
+# ─── Widgets Between Graphs (in two columns to reduce width) ────────────────
 st.markdown("---")
-st.slider(
-    "Total Labour (L)",
-    min_value=1,
-    max_value=MAX_L,
-    value=st.session_state.L,
-    step=1,
-    key="L"
-)
-st.slider(
-    "Efficiency 🐸 (e_x)",
-    min_value=1,
-    max_value=MAX_e_x,
-    value=st.session_state.e_x,
-    step=1,
-    key="e_x"
-)
-st.slider(
-    "Efficiency 🟠 (e_y)",
-    min_value=1,
-    max_value=MAX_e_y,
-    value=st.session_state.e_y,
-    step=1,
-    key="e_y"
-)
-st.slider(
-    "Move a point along the frontier (🐸 axis)",
-    min_value=0.0,
-    max_value=float(x_max),
-    value=st.session_state.x_move,
-    step=0.05,
-    key="x_move"
-)
+col_w1, col_w2 = st.columns(2)
+with col_w1:
+    st.slider(
+        "Total Labour (L)",
+        min_value=1,
+        max_value=MAX_L,
+        value=st.session_state.L,
+        step=1,
+        key="L"
+    )
+    st.slider(
+        "Efficiency 🐸 (e_x)",
+        min_value=1,
+        max_value=MAX_e_x,
+        value=st.session_state.e_x,
+        step=1,
+        key="e_x"
+    )
+with col_w2:
+    st.slider(
+        "Efficiency 🟠 (e_y)",
+        min_value=1,
+        max_value=MAX_e_y,
+        value=st.session_state.e_y,
+        step=1,
+        key="e_y"
+    )
+    st.slider(
+        "Move a point along the frontier (🐸 axis)",
+        min_value=0.0,
+        max_value=float(x_max),
+        value=st.session_state.x_move,
+        step=0.05,
+        key="x_move"
+    )
 st.markdown("---")
 
 # ─── Second Graph: Moving Point & Tangent Line ───────────────────────────────
@@ -262,6 +276,7 @@ fig_right.add_trace(
     )
 )
 
+# Annotate the slope in large font at the top-right of the second graph
 fig_right.update_layout(
     xaxis=dict(
         range=[0, GLOBAL_x_max * 1.02],
@@ -277,7 +292,16 @@ fig_right.update_layout(
     paper_bgcolor="rgba(0,0,0,0)",
     width=700,
     height=500,
-    margin=dict(l=20, r=20, t=20, b=20)
+    margin=dict(l=20, r=20, t=20, b=20),
+    annotations=[
+        dict(
+            x=0.95, y=0.95,
+            xref='paper', yref='paper',
+            text=f"Slope: {slope_at_move:.2f}",
+            showarrow=False,
+            font=dict(size=18, color="darkorange")
+        )
+    ]
 )
 fig_right.update_xaxes(fixedrange=True)
 fig_right.update_yaxes(fixedrange=True)
