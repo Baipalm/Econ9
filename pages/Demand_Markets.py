@@ -57,7 +57,7 @@ with col_change_right:
 
 # ----------------------------------------
 # 7) Prepare base x‐values for plotting demand curves
-x_vals = np.linspace(0, 5, 100)
+x_vals = np.linspace(0, 10, 100)
 y_vals_original = -x_vals + 5      # Original: P = –Q + 5
 
 # 7a) Function to create the LEFT figure:
