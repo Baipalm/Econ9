@@ -65,7 +65,8 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
     return - (e_y * x_pt) / (e_x**2 * np.sqrt(inside))
 
 
-st.title("Fixed-Axis PPF with Split View: Data & Tangent (Widgets Below)")
+# ─── Title ───────────────────────────────────────────────────────────────────
+st.title("ppf")
 
 # ─── Session State Initialization ────────────────────────────────────────────
 if 'L' not in st.session_state:
@@ -75,7 +76,7 @@ if 'e_x' not in st.session_state:
 if 'e_y' not in st.session_state:
     st.session_state.e_y = 10
 
-# Retrieve current slider values (will be updated at the bottom)
+# Retrieve current slider values
 L   = st.session_state.L
 e_x = st.session_state.e_x
 e_y = st.session_state.e_y
@@ -86,7 +87,6 @@ x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 # Ensure 'x_move' exists in session_state and clamp to [0, x_max]
 if 'x_move' not in st.session_state:
     st.session_state.x_move = float(x_max) / 2.0
-# Clamp if previous x_move exceeds new x_max
 if st.session_state.x_move > x_max:
     st.session_state.x_move = float(x_max)
 x_move = float(st.session_state.x_move)
@@ -99,7 +99,7 @@ slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
 x_tan = np.linspace(0.0, x_max, 200)
 y_tan = slope_at_move * (x_tan - x_move) + y_move
 
-# Generate random points over the GLOBAL rectangle and classify inside/outside
+# Generate random points and classify inside/outside
 x_rand, y_rand = generate_random_points_global(num_points=30)
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
 is_inside = (y_rand <= ppf_thresholds)
@@ -108,143 +108,70 @@ y_inside  = y_rand[is_inside]
 x_outside = x_rand[~is_inside]
 y_outside = y_rand[~is_inside]
 
-# ─── Layout: Two columns with larger, square‐sized graphs ────────────────────
-col1, col2 = st.columns(2)
+# ─── First Graph: PPF Curve & Random Points ──────────────────────────────────
+fig_left = go.Figure()
 
-with col1:
-    st.subheader("1) PPF Curve & Random Points")
-    fig_left = go.Figure()
-
-    # 1a) PPF curve (filled to zero)
-    fig_left.add_trace(
-        go.Scatter(
-            x=x_curve,
-            y=y_curve,
-            mode='lines',
-            fill='tozeroy',
-            line=dict(color='royalblue', width=2),
-            name='PPF Curve'
-        )
+fig_left.add_trace(
+    go.Scatter(
+        x=x_curve,
+        y=y_curve,
+        mode='lines',
+        fill='tozeroy',
+        line=dict(color='royalblue', width=2),
+        name='PPF Curve'
     )
-
-    # 1b) Points outside the frontier
-    fig_left.add_trace(
-        go.Scatter(
-            x=x_outside,
-            y=y_outside,
-            mode='markers',
-            marker=dict(
-                color='white',
-                size=9,
-                line=dict(color='black', width=1)
-            ),
-            name='Outside Points'
-        )
-    )
-
-    # 1c) Points inside or on the frontier
-    fig_left.add_trace(
-        go.Scatter(
-            x=x_inside,
-            y=y_inside,
-            mode='markers',
-            marker=dict(
-                color='yellow',
-                size=9,
-                line=dict(color='black', width=1)
-            ),
-            name='Inside Points'
-        )
-    )
-
-    # ── Layout tweaks for a larger square plot ─────────────────────────────
-    fig_left.update_layout(
-        xaxis=dict(
-            range=[0, GLOBAL_x_max * 1.02],
-            showgrid=False,
-            title_text="Units of 🐸",
+)
+fig_left.add_trace(
+    go.Scatter(
+        x=x_outside,
+        y=y_outside,
+        mode='markers',
+        marker=dict(
+            color='white',
+            size=9,
+            line=dict(color='black', width=1)
         ),
-        yaxis=dict(
-            range=[0, GLOBAL_y_max * 1.02],
-            showgrid=False,
-            title_text="Units of 🟠",
+        name='Outside Points'
+    )
+)
+fig_left.add_trace(
+    go.Scatter(
+        x=x_inside,
+        y=y_inside,
+        mode='markers',
+        marker=dict(
+            color='yellow',
+            size=9,
+            line=dict(color='black', width=1)
         ),
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        width=700,
-        height=700,
-        margin=dict(l=20, r=20, t=40, b=20)
+        name='Inside Points'
     )
-    fig_left.update_xaxes(fixedrange=True)
-    fig_left.update_yaxes(fixedrange=True)
+)
 
-    # Explicitly disable container-width so it stays square
-    st.plotly_chart(fig_left, use_container_width=False)
+fig_left.update_layout(
+    xaxis=dict(
+        range=[0, GLOBAL_x_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🐸",
+    ),
+    yaxis=dict(
+        range=[0, GLOBAL_y_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🟠",
+    ),
+    plot_bgcolor="rgba(0,0,0,0)",
+    paper_bgcolor="rgba(0,0,0,0)",
+    width=700,
+    height=700,
+    margin=dict(l=20, r=20, t=20, b=20)
+)
+fig_left.update_xaxes(fixedrange=True)
+fig_left.update_yaxes(fixedrange=True)
 
-with col2:
-    st.subheader("2) Moving Point & Tangent Line")
-    fig_right = go.Figure()
+st.plotly_chart(fig_left, use_container_width=False)
 
-    # 2a) PPF curve (lines only)
-    fig_right.add_trace(
-        go.Scatter(
-            x=x_curve,
-            y=y_curve,
-            mode='lines',
-            line=dict(color='royalblue', width=2),
-            name='PPF Curve'
-        )
-    )
-
-    # 2b) The “moving” red point
-    fig_right.add_trace(
-        go.Scatter(
-            x=[x_move],
-            y=[y_move],
-            mode='markers',
-            marker=dict(color='red', size=12, symbol='circle'),
-            name='Moving Point'
-        )
-    )
-
-    # 2c) Tangent line at (x_move, y_move)
-    fig_right.add_trace(
-        go.Scatter(
-            x=x_tan,
-            y=y_tan,
-            mode='lines',
-            line=dict(color='darkorange', width=2, dash='dash'),
-            name='Tangent Line'
-        )
-    )
-
-    # ── Layout tweaks for a larger square plot ─────────────────────────────
-    fig_right.update_layout(
-        xaxis=dict(
-            range=[0, GLOBAL_x_max * 1.02],
-            showgrid=False,
-            title_text="Units of 🐸",
-        ),
-        yaxis=dict(
-            range=[0, GLOBAL_y_max * 1.02],
-            showgrid=False,
-            title_text="Units of 🟠",
-        ),
-        plot_bgcolor="rgba(0,0,0,0)",
-        paper_bgcolor="rgba(0,0,0,0)",
-        width=700,
-        height=700,
-        margin=dict(l=20, r=20, t=40, b=20)
-    )
-    fig_right.update_xaxes(fixedrange=True)
-    fig_right.update_yaxes(fixedrange=True)
-
-    st.plotly_chart(fig_right, use_container_width=False)
-
-st.markdown("---")  # Separator before the widgets
-
-# ─── Sliders at the Bottom ───────────────────────────────────────────────────
-st.subheader("Adjust Parameters")
+# ─── Widgets Between Graphs ───────────────────────────────────────────────────
+st.markdown("---")
 st.slider(
     "Total Labour (L)",
     min_value=1,
@@ -269,7 +196,6 @@ st.slider(
     step=1,
     key="e_y"
 )
-
 st.slider(
     "Move a point along the frontier (🐸 axis)",
     min_value=0.0,
@@ -278,3 +204,57 @@ st.slider(
     step=0.05,
     key="x_move"
 )
+st.markdown("---")
+
+# ─── Second Graph: Moving Point & Tangent Line ───────────────────────────────
+fig_right = go.Figure()
+
+fig_right.add_trace(
+    go.Scatter(
+        x=x_curve,
+        y=y_curve,
+        mode='lines',
+        line=dict(color='royalblue', width=2),
+        name='PPF Curve'
+    )
+)
+fig_right.add_trace(
+    go.Scatter(
+        x=[x_move],
+        y=[y_move],
+        mode='markers',
+        marker=dict(color='red', size=12, symbol='circle'),
+        name='Moving Point'
+    )
+)
+fig_right.add_trace(
+    go.Scatter(
+        x=x_tan,
+        y=y_tan,
+        mode='lines',
+        line=dict(color='darkorange', width=2, dash='dash'),
+        name='Tangent Line'
+    )
+)
+
+fig_right.update_layout(
+    xaxis=dict(
+        range=[0, GLOBAL_x_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🐸",
+    ),
+    yaxis=dict(
+        range=[0, GLOBAL_y_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🟠",
+    ),
+    plot_bgcolor="rgba(0,0,0,0)",
+    paper_bgcolor="rgba(0,0,0,0)",
+    width=700,
+    height=700,
+    margin=dict(l=20, r=20, t=20, b=20)
+)
+fig_right.update_xaxes(fixedrange=True)
+fig_right.update_yaxes(fixedrange=True)
+
+st.plotly_chart(fig_right, use_container_width=False)
