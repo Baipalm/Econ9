@@ -10,42 +10,25 @@ BASE_SUPPLY_INTERCEPT = 0.0   # Supply: P = Q + (0 + shift_supply)
 BASE_DEMAND_INTERCEPT = 10.0  # Demand: P = –Q + (10 + shift_demand)
 
 # ——————————————————————————————
-# Slider 1: Supply shift (shift_supply)
-# Range: [-2, 2]
-# (Moved to bottom—placeholders here)
+# Sidebar Sliders for shifts
 # ——————————————————————————————
-# shift_supply = st.slider(
-#     label="Supply Shift (adds to base intercept 0)",
-#     min_value=-2.0,
-#     max_value=2.0,
-#     value=0.0,
-#     step=0.1,
-#     key="shift_supply"
-# )
+shift_supply = st.sidebar.slider(
+    label="Supply Shift (adds to base intercept 0)",
+    min_value=-2.0,
+    max_value=2.0,
+    value=0.0,
+    step=0.1,
+    key="shift_supply"
+)
 
-# ——————————————————————————————
-# Slider 2: Demand shift (shift_demand)
-# Range: [-2, 2]
-# (Moved to bottom—placeholders here)
-# ——————————————————————————————
-# shift_demand = st.slider(
-#     label="Demand Shift (adds to base intercept 10)",
-#     min_value=-2.0,
-#     max_value=2.0,
-#     value=0.0,
-#     step=0.1,
-#     key="shift_demand"
-# )
-
-# Instead, just reserve keys for session_state
-if "shift_supply" not in st.session_state:
-    st.session_state.shift_supply = 0.0
-if "shift_demand" not in st.session_state:
-    st.session_state.shift_demand = 0.0
-
-# Retrieve shifts from session_state (defaults to 0.0)
-shift_supply = st.session_state.shift_supply
-shift_demand = st.session_state.shift_demand
+shift_demand = st.sidebar.slider(
+    label="Demand Shift (adds to base intercept 10)",
+    min_value=-2.0,
+    max_value=2.0,
+    value=0.0,
+    step=0.1,
+    key="shift_demand"
+)
 
 # Compute actual intercepts
 intercept_supply = BASE_SUPPLY_INTERCEPT + shift_supply    # b_s = 0 + shift_supply
@@ -130,7 +113,7 @@ fig.update_layout(
     width=600,
     height=600,
     legend=dict(yanchor="top", y=0.95, xanchor="left", x=0.05),
-    margin=dict(l=50, r=50, t=20, b=20)
+    margin=dict(l=50, r=50, t=20, b=20),
 )
 
 # Display the chart without interactive zooming
@@ -141,25 +124,4 @@ st.plotly_chart(
         "staticPlot": True,
         "displayModeBar": False
     }
-)
-
-# ——————————————————————————————
-# Sliders (moved to bottom)
-# ——————————————————————————————
-shift_supply = st.slider(
-    label="Supply Shift (adds to base intercept 0)",
-    min_value=-2.0,
-    max_value=2.0,
-    value=shift_supply,
-    step=0.1,
-    key="shift_supply"
-)
-
-shift_demand = st.slider(
-    label="Demand Shift (adds to base intercept 10)",
-    min_value=-2.0,
-    max_value=2.0,
-    value=shift_demand,
-    step=0.1,
-    key="shift_demand"
 )
