@@ -7,7 +7,7 @@ MAX_L   = 40
 MAX_e_x = 20
 MAX_e_y = 20
 
-# Precompute “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
+# Precompute the “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
 GLOBAL_x_max = MAX_e_x * np.sqrt(MAX_L)   # ≈ 20 * √40
 GLOBAL_y_max = MAX_e_y * np.sqrt(MAX_L)   # ≈ 20 * √40
 
@@ -99,19 +99,23 @@ slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
 x_tan = np.linspace(0.0, x_max, 200)
 y_tan = slope_at_move * (x_tan - x_move) + y_move
 
-# Generate random points and classify inside/outside/on‐curve
+# Generate random points and classify inside/outside/on‐curve (within tolerance)
 x_rand, y_rand = generate_random_points_global(num_points=30)
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
 
-# Identify points on the PPF (intersection)
-is_on_curve = np.isclose(y_rand, ppf_thresholds, atol=1e-3)
-# Points strictly inside (below but not on)
-is_inside = (y_rand < ppf_thresholds) & (~is_on_curve)
-# Points outside
+# Any point whose vertical distance to the PPF ≤ 2 → “on‐curve” (red)
+tolerance = 2.0
+is_near_curve = np.abs(y_rand - ppf_thresholds) <= tolerance
+
+# Points strictly below (inside) but not “near” enough
+is_inside = (y_rand < ppf_thresholds) & (~is_near_curve)
+
+# Points strictly above (outside)
 is_outside = y_rand > ppf_thresholds
 
-x_on      = x_rand[is_on_curve]
-y_on      = y_rand[is_on_curve]
+# Extract subsets for plotting
+x_near    = x_rand[is_near_curve]
+y_near    = y_rand[is_near_curve]
 x_inside  = x_rand[is_inside]
 y_inside  = y_rand[is_inside]
 x_outside = x_rand[is_outside]
@@ -120,7 +124,6 @@ y_outside = y_rand[is_outside]
 # ─── First Graph: PPF Curve & Random Points ──────────────────────────────────
 fig_left = go.Figure()
 
-# PPF curve (blue line, filled)
 fig_left.add_trace(
     go.Scatter(
         x=x_curve,
@@ -131,21 +134,21 @@ fig_left.add_trace(
         name='PPF Curve'
     )
 )
-# Red markers: points exactly on the PPF
+# Red markers: points within 2 units of the curve
 fig_left.add_trace(
     go.Scatter(
-        x=x_on,
-        y=y_on,
+        x=x_near,
+        y=y_near,
         mode='markers',
         marker=dict(
             color='red',
             size=9,
             line=dict(color='black', width=1)
         ),
-        name='On PPF'
+        name=f'Near Curve (≤ {tolerance})'
     )
 )
-# Yellow markers: inside points
+# Yellow markers: inside points but farther than 2 units
 fig_left.add_trace(
     go.Scatter(
         x=x_inside,
@@ -156,7 +159,7 @@ fig_left.add_trace(
             size=9,
             line=dict(color='black', width=1)
         ),
-        name='Inside Points'
+        name='Inside (> 2 units away)'
     )
 )
 # White markers: outside points
@@ -170,11 +173,12 @@ fig_left.add_trace(
             size=9,
             line=dict(color='black', width=1)
         ),
-        name='Outside Points'
+        name='Outside'
     )
 )
 
 fig_left.update_layout(
+    uirevision='keep',  # preserve zoom/pan across reruns
     xaxis=dict(
         range=[0, GLOBAL_x_max * 1.02],
         showgrid=False,
@@ -194,9 +198,9 @@ fig_left.update_layout(
 fig_left.update_xaxes(fixedrange=True)
 fig_left.update_yaxes(fixedrange=True)
 
-st.plotly_chart(fig_left, use_container_width=False, config={'scrollZoom': False})
+st.plotly_chart(fig_left, use_container_width=False)
 
-# ─── Widgets for L, e_x, and e_y (between the two graphs) ────────────────────
+# ─── Widgets Between Graphs (in two columns to reduce width) ────────────────
 st.markdown("---")
 col_w1, col_w2 = st.columns(2)
 with col_w1:
@@ -225,12 +229,19 @@ with col_w2:
         step=1,
         key="e_y"
     )
+    st.slider(
+        "Move a point along the frontier (🐸 axis)",
+        min_value=0.0,
+        max_value=float(x_max),
+        value=st.session_state.x_move,
+        step=0.05,
+        key="x_move"
+    )
 st.markdown("---")
 
 # ─── Second Graph: Moving Point & Tangent Line ───────────────────────────────
 fig_right = go.Figure()
 
-# PPF curve (blue line)
 fig_right.add_trace(
     go.Scatter(
         x=x_curve,
@@ -240,7 +251,6 @@ fig_right.add_trace(
         name='PPF Curve'
     )
 )
-# Moving point (red dot)
 fig_right.add_trace(
     go.Scatter(
         x=[x_move],
@@ -250,7 +260,6 @@ fig_right.add_trace(
         name='Moving Point'
     )
 )
-# Tangent line (dashed orange)
 fig_right.add_trace(
     go.Scatter(
         x=x_tan,
@@ -261,8 +270,8 @@ fig_right.add_trace(
     )
 )
 
-# Annotate the opportunity cost (absolute slope) in large font at top-right
 fig_right.update_layout(
+    uirevision='keep',  # preserve zoom/pan across reruns
     xaxis=dict(
         range=[0, GLOBAL_x_max * 1.02],
         showgrid=False,
@@ -291,15 +300,4 @@ fig_right.update_layout(
 fig_right.update_xaxes(fixedrange=True)
 fig_right.update_yaxes(fixedrange=True)
 
-st.plotly_chart(fig_right, use_container_width=False, config={'scrollZoom': False})
-
-# ─── “Move a point along the frontier” slider at the very bottom ─────────────
-st.markdown("---")
-st.slider(
-    "Move a point along the frontier (🐸 axis)",
-    min_value=0.0,
-    max_value=float(x_max),
-    value=st.session_state.x_move,
-    step=0.05,
-    key="x_move"
-)
+st.plotly_chart(fig_right, use_container_width=False)
