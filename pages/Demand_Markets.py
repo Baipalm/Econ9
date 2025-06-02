@@ -9,7 +9,7 @@ st.title("Price vs. Quantity Demanded")
 
 # Generate x and y values
 x = np.linspace(0, 10, 100)
-y = x / 2 + 5
+y = -x / 2 + 5
 
 # Create Plotly figure with filled area under the curve
 fig = go.Figure(
@@ -19,7 +19,7 @@ fig = go.Figure(
         mode="lines",
         fill="tozeroy",
         line=dict(color="royalblue"),
-        name="Price = Quantity/2 + 5"
+        name="Price =Quantity/2 + 5"
     )
 )
 
