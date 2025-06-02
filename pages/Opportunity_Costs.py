@@ -53,7 +53,7 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
     return - (e_y * x_pt) / (e_x**2 * np.sqrt(inside))
 
 # ─── Title ───────────────────────────────────────────────────────────────────
-st.title("Moving Point + Centered Tangent Line")
+st.title("Opportunity Cost along the PPF curve")
 
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'L' not in st.session_state:
