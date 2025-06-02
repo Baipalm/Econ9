@@ -2,91 +2,87 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
+# ── Constants for slider maximums ────────────────────────────────────────────
+MAX_L   = 40
+MAX_e_x = 20
+MAX_e_y = 20
+
+# Precompute the “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
+GLOBAL_x_max = MAX_e_x * np.sqrt(MAX_L)   # ≈ 20 * √40
+GLOBAL_y_max = MAX_e_y * np.sqrt(MAX_L)   # ≈ 20 * √40
+
 @st.cache_data
-def generate_curve_and_samples(
-    e_x: int,
-    e_y: int,
-    L: int,
-    num_curve_pts: int = 500
-):
+def generate_curve(e_x: int, e_y: int, L: int, num_curve_pts: int = 500):
     """
     Returns:
-      - x_curve, y_curve: NumPy arrays of length (num_curve_pts + 2), 
-        including (0, y_max) and (x_max, 0).
-      - x_max, y_max: axis‐intercepts of the PPF.
-    Cached until e_x, e_y, or L change.
+      - x_curve, y_curve: NumPy arrays of length (num_curve_pts+2),
+        with endpoints (0, y_max) and (x_max, 0) included, where
+        x_max = e_x * √L, y_max = e_y * √L.
     """
     x_max = e_x * np.sqrt(L)
     y_max = e_y * np.sqrt(L)
 
+    # Dense points on [0, x_max]
     x_dense = np.linspace(0.0, x_max, num_curve_pts)
     inside = L - (x_dense / e_x) ** 2
     inside[inside < 0] = 0
     y_dense = e_y * np.sqrt(inside)
 
+    # Prepend/app​end to hit the axes exactly
     x_curve = np.concatenate(([0.0], x_dense, [x_max]))
     y_curve = np.concatenate(([y_max], y_dense, [0.0]))
 
     return x_curve, y_curve, x_max, y_max
 
 @st.cache_data
-def generate_random_test_points(
-    e_x: int,
-    e_y: int,
-    L: int,
-    num_points: int = 30,
-    seed: int = 42
-):
+def generate_random_points_global(num_points: int = 30, seed: int = 42):
     """
-    Generates `num_points` uniformly in [0, x_max] × [0, y_max].
+    Generates `num_points` uniformly in [0, GLOBAL_x_max] × [0, GLOBAL_y_max].
     Returns:
       - x_rand, y_rand: arrays of shape (num_points,)
     """
     np.random.seed(seed)
-    x_max = e_x * np.sqrt(L)
-    y_max = e_y * np.sqrt(L)
-
-    x_rand = np.random.uniform(0.0, x_max, num_points)
-    y_rand = np.random.uniform(0.0, y_max, num_points)
+    x_rand = np.random.uniform(0.0, GLOBAL_x_max, num_points)
+    y_rand = np.random.uniform(0.0, GLOBAL_y_max, num_points)
     return x_rand, y_rand
 
-def compute_y_single(x: float, e_x: int, e_y: int, L: int) -> float:
+def compute_ppf_y(x: float, e_x: int, e_y: int, L: int) -> float:
     """
-    Compute y = e_y * sqrt(L - (x/e_x)^2) for a single x.
-    Returns 0 if inside‐sqrt is negative.
+    Compute y = e_y * sqrt(L - (x/e_x)^2) for one x.
+    If inside‐sqrt < 0, return 0.
     """
-    inside = L - (x / e_x)**2
+    inside = L - (x / e_x) ** 2
     return float(e_y * np.sqrt(max(inside, 0.0)))
 
 # ─── Sidebar controls ─────────────────────────────────────────────────────────
-st.title("PPF with Transparent Background & Test Points")
+st.title("Fixed‐Axis PPF with Global Random Points")
 st.sidebar.header("Settings")
 
-L   = st.sidebar.slider("Total Labour (L)",        1, 40, 20, step=1)
-e_x = st.sidebar.slider("Efficiency 🐸 (e_x)",      1, 20, 10, step=1)
-e_y = st.sidebar.slider("Efficiency 🟠 (e_y)",      1, 20, 10, step=1)
+L   = st.sidebar.slider("Total Labour (L)",        1, MAX_L,   20, step=1)
+e_x = st.sidebar.slider("Efficiency 🐸 (e_x)",      1, MAX_e_x, 10, step=1)
+e_y = st.sidebar.slider("Efficiency 🟠 (e_y)",      1, MAX_e_y, 10, step=1)
 
-# ─── Get (cached) PPF curve + intercepts ────────────────────────────────────
-x_curve, y_curve, x_max, y_max = generate_curve_and_samples(e_x, e_y, L)
+# ─── Generate (cached) PPF curve for current sliders ────────────────────────
+x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 
-# ─── Get (cached) random test points ────────────────────────────────────────
-x_rand, y_rand = generate_random_test_points(e_x, e_y, L, num_points=30)
+# ─── Generate (cached) random points over the GLOBAL rectangle ─────────────
+x_rand, y_rand = generate_random_points_global(num_points=30)
 
-# ─── Determine if points are inside/outside (optional) ─────────────────────
-inside_threshold = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
-is_inside = (y_rand <= inside_threshold)
+# Determine whether each random point is “inside” or “outside” the current PPF
+ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
+is_inside = (y_rand <= ppf_thresholds)
 
-# ─── “Moving” point via slider ──────────────────────────────────────────────
+# ─── “Moving” point on the frontier via slider ───────────────────────────────
 x_move = st.slider(
-    "Move a point along the frontier (🌸)",
+    "Move a point along the frontier (🐸 axis)",
     min_value=0.0,
     max_value=float(x_max),
     value=float(x_max / 2),
     step=0.05
 )
-y_move = compute_y_single(x_move, e_x, e_y, L)
+y_move = compute_ppf_y(x_move, e_x, e_y, L)
 
-# ─── Build Plotly figure ────────────────────────────────────────────────────
+# ─── Build the Plotly figure ────────────────────────────────────────────────
 fig = go.Figure()
 
 # 1) PPF curve (filled to zero)
@@ -101,7 +97,7 @@ fig.add_trace(
     )
 )
 
-# 2) Random test points in white with black border
+# 2) Random points over the GLOBAL region (white markers, black outline)
 fig.add_trace(
     go.Scatter(
         x=x_rand,
@@ -109,14 +105,14 @@ fig.add_trace(
         mode='markers',
         marker=dict(
             color='white',
-            size=10,
+            size=9,
             line=dict(color='black', width=1)
         ),
-        name='Random Points'
+        name='Global Random Points'
     )
 )
 
-# 3) Moving red marker
+# 3) The “moving” red point on the current frontier
 fig.add_trace(
     go.Scatter(
         x=[x_move],
@@ -127,20 +123,26 @@ fig.add_trace(
     )
 )
 
-# ─── Layout tweaks (transparent background, no grid) ────────────────────────
+# ─── Layout tweaks ──────────────────────────────────────────────────────────
 fig.update_layout(
-    xaxis=dict(range=[0, x_max * 1.05], showgrid=False),
-    yaxis=dict(range=[0, y_max * 1.05], showgrid=False),
-    xaxis_title="Units of 🐸",
-    yaxis_title="Units of 🟠",
-    plot_bgcolor="rgba(0,0,0,0)",   # transparent plot area
-    paper_bgcolor="rgba(0,0,0,0)",  # transparent surrounding area
+    xaxis=dict(
+        range=[0, GLOBAL_x_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🐸",
+    ),
+    yaxis=dict(
+        range=[0, GLOBAL_y_max * 1.02],
+        showgrid=False,
+        title_text="Units of 🟠",
+    ),
+    plot_bgcolor="rgba(0,0,0,0)",
+    paper_bgcolor="rgba(0,0,0,0)",
     width=600,
-    height=600
+    height=600,
 )
 
 fig.update_xaxes(fixedrange=True)
 fig.update_yaxes(fixedrange=True)
 
-# ─── Render chart ───────────────────────────────────────────────────────────
+# ─── Render the chart ───────────────────────────────────────────────────────
 st.plotly_chart(fig, use_container_width=True)
