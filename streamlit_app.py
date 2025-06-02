@@ -44,7 +44,7 @@ def fetch_and_prepare_gdp():
         raise ValueError("Could not find the expected CSV inside the World Bank ZIP")
 
     # 3. Read that CSV into a DataFrame
-    raw = pd.read_csv(z.open(csv_filename), skiprows=4)  
+    raw = pd.read_csv(z.open(csv_filename), skiprows=4)
     # skiprows=4 because the first 4 rows are header/info rows in the downloaded CSV.
 
     # 4. Identify all year-columns (e.g. “1960”, “1961”, …) dynamically
