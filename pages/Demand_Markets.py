@@ -2,36 +2,54 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
-# 1) Wide layout
+# ----------------------------------------
+# 1) Set up wide layout and page title
 st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
-st.title("Side-by-Side Demand Curves with Movable Left Marker")
+st.title("Side-by-Side Demand Curves (with ΔQ & ΔP Display)")
 
-# ------------------------------------------------------------------------------
-# 2) Slider: controls x_left (moves the left dot along P = -Q + 5)
-x_left = st.slider(
-    label="Move Left Circle (Quantity)", 
-    min_value=0.0, 
-    max_value=5.0, 
-    value=2.5, 
-    step=0.1
-)
-# Compute its price on the original demand curve: P = -Q + 5
+# ----------------------------------------
+# 2) Persist slider value in session_state
+#    so that we can use x_left before we actually draw the slider below.
+if "x_left" not in st.session_state:
+    st.session_state.x_left = 2.5
+x_left = st.session_state.x_left
+
+# Compute price on the original demand curve:
 y_left = -x_left + 5
 
-# We want to shift the right curve by exactly the vertical difference between
-# y_left and the “old equilibrium” price 2.5:
+# Compute vertical shift ΔP (for the right graph):
 delta_p = y_left - 2.5
-# (So if y_left = 3.0 at x_left = 2.0, then delta_p = 3.0 - 2.5 = +0.5, i.e. right curve shifts up 0.5.)
 
-# ------------------------------------------------------------------------------
-# 3) Base demand‐curve points for plotting
+# Compute ΔQ and ΔP for the LEFT graph (relative to (2.5, 2.5))
+delta_q_left = x_left - 2.5
+delta_p_left = y_left - 2.5
+
+# Compute ΔQ and ΔP for the RIGHT graph (ΔQ_right = 0 always,
+# since Q_right remains 2.5; ΔP_right = delta_p)
+delta_q_right = 0.0
+delta_p_right = delta_p
+
+# ----------------------------------------
+# 3) Display ΔQ & ΔP in bold, side by side *above* the graphs
+col_change_left, col_change_right = st.columns(2)
+with col_change_left:
+    st.markdown(
+        f"**Left ΔQ: {delta_q_left:.2f}, ΔP: {delta_p_left:.2f}**"
+    )
+with col_change_right:
+    st.markdown(
+        f"**Right ΔQ: {delta_q_right:.2f}, ΔP: {delta_p_right:.2f}**"
+    )
+
+# ----------------------------------------
+# 4) Prepare base x‐values for plotting demand curves
 x_vals = np.linspace(0, 5, 100)
-y_vals_original = -x_vals + 5    # “Original”: P = -Q + 5
+y_vals_original = -x_vals + 5      # Original: P = –Q + 5
 
-# Left‐panel figure: just draw P = -Q + 5 and put a dot at (x_left, y_left)
+# 4a) Function to create the LEFT figure:
 def create_left_figure(marker_x: float, marker_y: float):
     fig = go.Figure()
-    # Plot the original demand line
+    # Original demand line (no shift)
     fig.add_trace(
         go.Scatter(
             x=x_vals,
@@ -39,10 +57,10 @@ def create_left_figure(marker_x: float, marker_y: float):
             mode="lines",
             fill="tozeroy",
             line=dict(color="crimson"),
-            name="Demand: P = -Q + 5"
+            name="Demand: P = –Q + 5"
         )
     )
-    # Plot the red dot at (marker_x, marker_y)
+    # Red dot sliding along P = –Q + 5
     fig.add_trace(
         go.Scatter(
             x=[marker_x],
@@ -55,7 +73,7 @@ def create_left_figure(marker_x: float, marker_y: float):
     fig.update_layout(
         title="Left Curve (Movable Marker)",
         xaxis=dict(title="Quantity Demanded", range=[0, 5], fixedrange=True),
-        yaxis=dict(title="Price", range=[0, 5], fixedrange=True),
+        yaxis=dict(title="Price",           range=[0, 5], fixedrange=True),
         width=400,
         height=400,
         margin=dict(l=40, r=40, t=40, b=40),
@@ -63,20 +81,18 @@ def create_left_figure(marker_x: float, marker_y: float):
     )
     return fig
 
-# Right‐panel figure: shift P = -Q + 5 *up* by delta_p, i.e. P = -Q + (5 + delta_p).
-# Then compute the new price at Q = 2.5 on that shifted curve, and place the red dot there.
+# 4b) Function to create the RIGHT figure, shifted vertically by vertical_shift:
 def create_right_figure(vertical_shift: float):
     """
-    - vertical_shift = ΔP = ( y_left - 2.5 ).
-    - New intercept = 5 + vertical_shift.
-    - So shifted demand curve is:  P = -Q + (5 + vertical_shift).
-    - We fix Q_marker = 2.5 →  P_marker = -2.5 + (5 + vertical_shift).
+    Shifted demand curve:  P = –Q + (5 + vertical_shift).
+    Place red dot at Q = 2.5, so:
+        P_dot = –2.5 + (5 + vertical_shift).
     """
     intercept_shifted = 5.0 + vertical_shift
     y_vals_shifted = -x_vals + intercept_shifted
 
     fig = go.Figure()
-    # 1) Plot the shifted demand line
+    # Plot the shifted line
     fig.add_trace(
         go.Scatter(
             x=x_vals,
@@ -84,10 +100,10 @@ def create_right_figure(vertical_shift: float):
             mode="lines",
             fill="tozeroy",
             line=dict(color="crimson"),
-            name=f"Demand: P = -Q + {intercept_shifted:.2f}"
+            name=f"Demand: P = –Q + {intercept_shifted:.2f}"
         )
     )
-    # 2) Place the red dot at the intersection of Q = 2.5 with this shifted line:
+    # Red dot at (2.5, –2.5 + intercept_shifted)
     x_marker = 2.5
     y_marker = -2.5 + intercept_shifted
     fig.add_trace(
@@ -100,9 +116,9 @@ def create_right_figure(vertical_shift: float):
         )
     )
     fig.update_layout(
-        title="Right Curve (Shifted Up with Demand)",
+        title="Right Curve (Shifted Vertically)",
         xaxis=dict(title="Quantity Demanded", range=[0, 5], fixedrange=True),
-        yaxis=dict(title="Price", range=[0, 5], fixedrange=True),
+        yaxis=dict(title="Price",           range=[0, 5], fixedrange=True),
         width=400,
         height=400,
         margin=dict(l=40, r=40, t=40, b=40),
@@ -110,31 +126,39 @@ def create_right_figure(vertical_shift: float):
     )
     return fig
 
-# ------------------------------------------------------------------------------
-# 4) Build each figure:
-
-# LEFT: no vertical shift → P = -Q + 5; dot at (x_left, y_left)
-fig_left = create_left_figure(marker_x=x_left, marker_y=y_left)
-
-# RIGHT: vertical shift = delta_p; dot automatically computed from the shifted line at Q = 2.5
+# 4c) Build each figure
+fig_left  = create_left_figure(marker_x=x_left, y_left=y_left)
 fig_right = create_right_figure(vertical_shift=delta_p)
 
-# ------------------------------------------------------------------------------
-# 5) Display them side by side
+# ----------------------------------------
+# 5) Display the two graphs, side by side
 col1, col2 = st.columns(2)
 
 with col1:
+    st.subheader("Left Demand Curve")
     st.plotly_chart(
         fig_left,
         use_container_width=False,
         config={"staticPlot": True},
-        key="demand_curve_left",
+        key="demand_curve_left"
     )
 
 with col2:
+    st.subheader("Right Demand Curve")
     st.plotly_chart(
         fig_right,
         use_container_width=False,
         config={"staticPlot": True},
-        key="demand_curve_right",
+        key="demand_curve_right"
     )
+
+# ----------------------------------------
+# 6) Finally, render the slider **below** the graphs
+st.slider(
+    label="Move Left Circle (Quantity)", 
+    min_value=0.0, 
+    max_value=5.0, 
+    value=st.session_state.x_left, 
+    step=0.1, 
+    key="x_left"
+)
