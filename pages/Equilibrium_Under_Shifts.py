@@ -3,11 +3,33 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Title of the app
-st.title("Interactive Supply and Demand Shifts (Fixed Scale)")
+st.title("Interactive Supply and Demand Shifts (Intersection Always On-Screen)")
 
-# Retrieve slider values from session_state (or use defaults if not set)
-intercept_demand = st.session_state.get("intercept_demand", 5.0)
-intercept_supply = st.session_state.get("intercept_supply", 5.0)
+# Slider for shifting the supply curve (intercept)
+# Default set lower so that demand > supply initially
+raw_supply = st.slider(
+    label="Supply Intercept (P = Q + intercept_supply)",
+    min_value=0.0,
+    max_value=10.0,
+    value=2.0,
+    step=0.5,
+    key="raw_supply"
+)
+
+# Slider for shifting the demand curve (intercept)
+# Default set higher so that demand > supply initially
+raw_demand = st.slider(
+    label="Demand Intercept (P = -Q + intercept_demand)",
+    min_value=0.0,
+    max_value=10.0,
+    value=8.0,
+    step=0.5,
+    key="raw_demand"
+)
+
+# Enforce intercept_demand ≥ intercept_supply to keep equilibrium Q ≥ 0
+intercept_supply = raw_supply
+intercept_demand = max(raw_demand, intercept_supply)
 
 # Fixed slopes for demand and supply
 slope_demand = -1  # Demand: P = -Q + intercept_demand
@@ -22,7 +44,7 @@ P_supply = slope_supply * Q + intercept_supply
 
 # Compute intersection analytically:
 intersection_Q = (intercept_supply - intercept_demand) / (slope_demand - slope_supply)
-intersection_P = slope_demand * intersection_Q + intercept_demand
+intersection_P = (intercept_demand + intercept_supply) / 2  # Equivalent to -Q_int + intercept_demand
 
 # Create Plotly figure
 fig = go.Figure()
@@ -92,26 +114,4 @@ st.plotly_chart(
         "staticPlot": True,       # Disable all zooming/scrolling interactions
         "displayModeBar": False   # Hide the mode bar
     }
-)
-
-# ——————————————————————————————
-# Sliders to shift demand and supply (positioned at the bottom)
-# ——————————————————————————————
-
-st.slider(
-    label="Shift Demand Curve (Intercept)",
-    min_value=0.0,
-    max_value=10.0,
-    value=intercept_demand,
-    step=0.5,
-    key="intercept_demand"
-)
-
-st.slider(
-    label="Shift Supply Curve (Intercept)",
-    min_value=0.0,
-    max_value=10.0,
-    value=intercept_supply,
-    step=0.5,
-    key="intercept_supply"
 )
