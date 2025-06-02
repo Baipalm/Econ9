@@ -49,7 +49,7 @@ fig2 = create_demand_figure()
 col1, col2 = st.columns(2)
 
 with col1:
-    st.plotly_chart(fig1, use_container_width=False, config={"staticPlot": True})
+    st.plotly_chart(fig1, use_container_width=False, config={"staticPlot": True}, key="demand_curve_1")
 
 with col2:
-    st.plotly_chart(fig2, use_container_width=False, config={"staticPlot": True})
+    st.plotly_chart(fig2, use_container_width=False, config={"staticPlot": True}, key="demand_curve_2")
