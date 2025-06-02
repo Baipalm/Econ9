@@ -3,29 +3,36 @@ import numpy as np
 import plotly.graph_objects as go
 
 @st.cache_data
-def generate_curve_and_samples(e_x: int, e_y: int, L: int, num_curve_pts: int = 500, num_samples: int = 10):
+def generate_curve_and_samples(
+    e_x: int,
+    e_y: int,
+    L: int,
+    num_curve_pts: int = 500,
+    num_samples: int = 10
+):
     """
     Returns:
-      - x_curve, y_curve: arrays of length (num_curve_pts + 2), 
-          with endpoints (0, y_max) and (x_max, 0) included.
+      - x_curve, y_curve: NumPy arrays of length (num_curve_pts + 2), 
+        including the endpoints (0, y_max) and (x_max, 0).
       - x_samples, y_samples: `num_samples` points strictly between 0 and x_max.
-    These will be cached until e_x, e_y, or L change.
+      - x_max, y_max: the axis‐intercepts of the PPF.
+    These outputs are cached until any of e_x, e_y, or L change.
     """
-    # Compute max‐values where curve hits axes
+    # 1) Compute where the frontier hits the axes:
     x_max = e_x * np.sqrt(L)
     y_max = e_y * np.sqrt(L)
-    
-    # Dense points along [0, x_max]
+
+    # 2) Build “dense” curve points between 0 and x_max:
     x_dense = np.linspace(0.0, x_max, num_curve_pts)
     inside = L - (x_dense / e_x) ** 2
     inside[inside < 0] = 0
     y_dense = e_y * np.sqrt(inside)
-    
-    # Prepend (0, y_max) and append (x_max, 0)
+
+    # 3) Prepend (0, y_max) and append (x_max, 0) so the curve touches both axes:
     x_curve = np.concatenate(([0.0], x_dense, [x_max]))
     y_curve = np.concatenate(([y_max], y_dense, [0.0]))
-    
-    # Equally‐spaced interior sample points
+
+    # 4) Generate `num_samples` interior points in x, equally spaced, strictly between 0 and x_max:
     x_samples = np.linspace(
         x_max / (num_samples + 1),
         x_max * num_samples / (num_samples + 1),
@@ -34,8 +41,9 @@ def generate_curve_and_samples(e_x: int, e_y: int, L: int, num_curve_pts: int = 
     inside_samp = L - (x_samples / e_x) ** 2
     inside_samp[inside_samp < 0] = 0
     y_samples = e_y * np.sqrt(inside_samp)
-    
+
     return x_curve, y_curve, x_samples, y_samples, x_max, y_max
+
 
 def compute_y_single(x: float, e_x: int, e_y: int, L: int) -> float:
     """
