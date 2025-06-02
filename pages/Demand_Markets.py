@@ -8,7 +8,15 @@ st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
 st.title("Side-by-Side Demand Curves (with ΔQ & ΔP Display)")
 
 # ----------------------------------------
-# 2) Persist slider value in session_state
+# 2) Add a sidebar control for Substitutes vs. Complements
+mode = st.sidebar.radio(
+    label="Product Relationship",
+    options=["Substitutes", "Complements"],
+    index=0  # default to “Substitutes”
+)
+
+# ----------------------------------------
+# 3) Persist slider value in session_state
 #    so that we can use x_left before we actually draw the slider below.
 if "x_left" not in st.session_state:
     st.session_state.x_left = 2.5
@@ -17,20 +25,26 @@ x_left = st.session_state.x_left
 # Compute price on the original demand curve:
 y_left = -x_left + 5
 
-# Compute vertical shift ΔP (for the right graph):
-delta_p = y_left - 2.5
-
-# Compute ΔQ and ΔP for the LEFT graph (relative to (2.5, 2.5))
-delta_q_left = x_left - 2.5
-delta_p_left = y_left - 2.5
-
-# Compute ΔQ and ΔP for the RIGHT graph (ΔQ_right = 0 always,
-# since Q_right remains 2.5; ΔP_right = delta_p)
-delta_q_right = 0.0
-delta_p_right = delta_p
+# ----------------------------------------
+# 4) Compute vertical shift ΔP for the right graph,
+#    inverting the sign if mode == "Complements"
+delta_raw = y_left - 2.5
+if mode == "Substitutes":
+    delta_p = delta_raw
+else:  # mode == "Complements"
+    delta_p = -delta_raw
 
 # ----------------------------------------
-# 3) Display ΔQ & ΔP in bold, side by side *above* the graphs
+# 5) Compute ΔQ and ΔP for the LEFT graph (relative to (2.5, 2.5))
+delta_q_left = x_left - 2.5
+delta_p_left = delta_raw
+
+# Compute ΔQ and ΔP for the RIGHT graph
+delta_q_right = 0.0          # Q_right always stays at 2.5
+delta_p_right = delta_p      # possibly inverted if mode=="Complements"
+
+# ----------------------------------------
+# 6) Display ΔQ & ΔP in bold, side by side *above* the graphs
 col_change_left, col_change_right = st.columns(2)
 with col_change_left:
     st.markdown(
@@ -42,11 +56,11 @@ with col_change_right:
     )
 
 # ----------------------------------------
-# 4) Prepare base x‐values for plotting demand curves
+# 7) Prepare base x‐values for plotting demand curves
 x_vals = np.linspace(0, 5, 100)
 y_vals_original = -x_vals + 5      # Original: P = –Q + 5
 
-# 4a) Function to create the LEFT figure:
+# 7a) Function to create the LEFT figure:
 def create_left_figure(marker_x: float, marker_y: float):
     fig = go.Figure()
     # Original demand line (no shift)
@@ -81,7 +95,7 @@ def create_left_figure(marker_x: float, marker_y: float):
     )
     return fig
 
-# 4b) Function to create the RIGHT figure, shifted vertically by vertical_shift:
+# 7b) Function to create the RIGHT figure, shifted vertically by vertical_shift:
 def create_right_figure(vertical_shift: float):
     """
     Shifted demand curve:  P = –Q + (5 + vertical_shift).
@@ -126,16 +140,14 @@ def create_right_figure(vertical_shift: float):
     )
     return fig
 
-# 4c) Build each figure
+# ----------------------------------------
+# 8) Build each figure
 
-# Build each figure (note the correct keyword ‘marker_y’ here):
-fig_left = create_left_figure(marker_x=x_left, marker_y=y_left)
-
-# And for the right panel:
+fig_left  = create_left_figure(marker_x=x_left, marker_y=y_left)
 fig_right = create_right_figure(vertical_shift=delta_p)
 
 # ----------------------------------------
-# 5) Display the two graphs, side by side
+# 9) Display the two graphs, side by side
 col1, col2 = st.columns(2)
 
 with col1:
@@ -157,7 +169,7 @@ with col2:
     )
 
 # ----------------------------------------
-# 6) Finally, render the slider **below** the graphs
+# 10) Finally, render the slider **below** the graphs
 st.slider(
     label="Move Left Circle (Quantity)", 
     min_value=0.0, 
