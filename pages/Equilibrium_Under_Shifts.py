@@ -1,13 +1,13 @@
 import streamlit as st
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly.graph_objects as go
 
 # Title of the app
-st.title("Interactive Supply and Demand Shifts")
+st.title("Interactive Supply and Demand Shifts (Plotly)")
 
 # Retrieve slider values from session_state (or use defaults if not set)
-intercept_demand = st.session_state.get("intercept_demand", 5)
-intercept_supply = st.session_state.get("intercept_supply", 5)
+intercept_demand = st.session_state.get("intercept_demand", 5.0)
+intercept_supply = st.session_state.get("intercept_supply", 5.0)
 
 # Fixed slopes for demand and supply
 slope_demand = -1  # Demand: P = -Q + intercept_demand
@@ -25,46 +25,61 @@ P_supply = slope_supply * Q + intercept_supply
 intersection_Q = (intercept_supply - intercept_demand) / (slope_demand - slope_supply)
 intersection_P = slope_demand * intersection_Q + intercept_demand
 
-# Create the figure and axis
-fig, ax = plt.subplots(figsize=(6, 6))
+# Create Plotly figure
+fig = go.Figure()
 
-# Plot demand and supply lines
-ax.plot(Q, P_demand, label=f"Demand: P = -Q + {intercept_demand}", color="blue", linewidth=2)
-ax.plot(Q, P_supply, label=f"Supply: P = Q + {intercept_supply}", color="red", linewidth=2)
-
-# Plot intersection marker
-ax.plot(intersection_Q, intersection_P, marker="o", color="green", markersize=8, label="Equilibrium")
-
-# Annotate the intersection point
-ax.annotate(
-    f"({intersection_Q:.2f}, {intersection_P:.2f})",
-    xy=(intersection_Q, intersection_P),
-    xytext=(intersection_Q + 0.5, intersection_P + 0.5),
-    arrowprops=dict(arrowstyle="->", lw=1.5),
-    fontsize=10,
-    color="green"
+# Add Demand line
+fig.add_trace(
+    go.Scatter(
+        x=Q,
+        y=P_demand,
+        mode="lines",
+        name=f"Demand: P = -Q + {intercept_demand}",
+        line=dict(color="blue", width=2),
+    )
 )
 
-# Set axis limits
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 10)
+# Add Supply line
+fig.add_trace(
+    go.Scatter(
+        x=Q,
+        y=P_supply,
+        mode="lines",
+        name=f"Supply: P = Q + {intercept_supply}",
+        line=dict(color="red", width=2),
+    )
+)
 
-# Label axes
-ax.set_xlabel("Quantity (Q)")
-ax.set_ylabel("Price (P)")
+# Add Intersection marker
+fig.add_trace(
+    go.Scatter(
+        x=[intersection_Q],
+        y=[intersection_P],
+        mode="markers+text",
+        name="Equilibrium",
+        marker=dict(color="green", size=10),
+        text=[f"({intersection_Q:.2f}, {intersection_P:.2f})"],
+        textposition="top right",
+    )
+)
 
-# Add grid and legend
-ax.grid(True, linestyle="--", alpha=0.5)
-ax.legend()
+# Update layout: axis ranges, labels, grid
+fig.update_layout(
+    xaxis=dict(title="Quantity (Q)", range=[0, 10], showgrid=True, gridcolor="lightgray"),
+    yaxis=dict(title="Price (P)", range=[0, 10], showgrid=True, gridcolor="lightgray"),
+    width=600,
+    height=600,
+    legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
+    margin=dict(l=50, r=50, t=50, b=50),
+)
 
-# Display the plot in Streamlit
-st.pyplot(fig)
+# Display the Plotly chart in Streamlit
+st.plotly_chart(fig, use_container_width=True)
 
 # ——————————————————————————————
 # Sliders to shift demand and supply (positioned at the bottom)
 # ——————————————————————————————
 
-# Slider for shifting the demand curve (intercept)
 st.slider(
     label="Shift Demand Curve (Intercept)",
     min_value=0.0,
@@ -74,7 +89,6 @@ st.slider(
     key="intercept_demand"
 )
 
-# Slider for shifting the supply curve (intercept)
 st.slider(
     label="Shift Supply Curve (Intercept)",
     min_value=0.0,
@@ -83,4 +97,3 @@ st.slider(
     step=0.5,
     key="intercept_supply"
 )
-
