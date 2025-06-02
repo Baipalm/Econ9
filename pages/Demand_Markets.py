@@ -127,7 +127,11 @@ def create_right_figure(vertical_shift: float):
     return fig
 
 # 4c) Build each figure
-fig_left  = create_left_figure(marker_x=x_left, y_left=y_left)
+
+# Build each figure (note the correct keyword ‘marker_y’ here):
+fig_left = create_left_figure(marker_x=x_left, marker_y=y_left)
+
+# And for the right panel:
 fig_right = create_right_figure(vertical_shift=delta_p)
 
 # ----------------------------------------
