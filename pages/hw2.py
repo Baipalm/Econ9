@@ -55,7 +55,7 @@ def compute_ppf_y(x: float, e_x: int, e_y: int, L: int) -> float:
     return float(e_y * np.sqrt(max(inside, 0.0)))
 
 # ─── Sidebar controls ─────────────────────────────────────────────────────────
-st.title("Fixed‐Axis PPF with Global Random Points")
+st.title("Fixed‐Axis PPF with Highlighted Points")
 st.sidebar.header("Settings")
 
 L   = st.sidebar.slider("Total Labour (L)",        1, MAX_L,   20, step=1)
@@ -68,9 +68,15 @@ x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 # ─── Generate (cached) random points over the GLOBAL rectangle ─────────────
 x_rand, y_rand = generate_random_points_global(num_points=30)
 
-# Determine whether each random point is “inside” or “outside” the current PPF
+# Determine whether each random point is “inside” (below or on) the current PPF
 ppf_thresholds = e_y * np.sqrt(np.maximum(0.0, L - (x_rand / e_x) ** 2))
 is_inside = (y_rand <= ppf_thresholds)
+
+# Split into two groups:
+x_inside  = x_rand[is_inside]
+y_inside  = y_rand[is_inside]
+x_outside = x_rand[~is_inside]
+y_outside = y_rand[~is_inside]
 
 # ─── “Moving” point on the frontier via slider ───────────────────────────────
 x_move = st.slider(
@@ -97,18 +103,33 @@ fig.add_trace(
     )
 )
 
-# 2) Random points over the GLOBAL region (white markers, black outline)
+# 2a) Points outside the frontier: white markers with black border
 fig.add_trace(
     go.Scatter(
-        x=x_rand,
-        y=y_rand,
+        x=x_outside,
+        y=y_outside,
         mode='markers',
         marker=dict(
             color='white',
             size=9,
             line=dict(color='black', width=1)
         ),
-        name='Global Random Points'
+        name='Outside Points'
+    )
+)
+
+# 2b) Points inside or on the frontier: yellow markers with black border
+fig.add_trace(
+    go.Scatter(
+        x=x_inside,
+        y=y_inside,
+        mode='markers',
+        marker=dict(
+            color='yellow',
+            size=9,
+            line=dict(color='black', width=1)
+        ),
+        name='Inside Points'
     )
 )
 
