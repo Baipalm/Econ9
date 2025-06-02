@@ -95,9 +95,12 @@ x_move = float(st.session_state.x_move)
 y_move = compute_ppf_y(x_move, e_x, e_y, L)
 slope_at_move = compute_tangent_slope(x_move, e_x, e_y, L)
 
-# Prepare tangent‐line x/y arrays (over [0, x_max])
-x_tan = np.linspace(0.0, x_max, 200)
-y_tan = slope_at_move * (x_tan - x_move) + y_move
+# Prepare tangent‐line x/y arrays centered on x_move (± 25% of x_max)
+half_width = 0.25 * x_max
+x_left  = max(0.0, x_move - half_width)
+x_right = min(x_max, x_move + half_width)
+x_tan   = np.linspace(x_left, x_right, 200)
+y_tan   = slope_at_move * (x_tan - x_move) + y_move
 
 # Generate random points and classify inside/outside/on‐curve (within tolerance)
 x_rand, y_rand = generate_random_points_global(num_points=30)
@@ -195,8 +198,9 @@ fig_left.update_layout(
     height=500,
     margin=dict(l=20, r=20, t=20, b=20)
 )
-fig_left.update_xaxes(fixedrange=True)
-fig_left.update_yaxes(fixedrange=True)
+# Allow panning/zooming by removing fixedrange
+# fig_left.update_xaxes(fixedrange=True)
+# fig_left.update_yaxes(fixedrange=True)
 
 st.plotly_chart(fig_left, use_container_width=False)
 
@@ -297,7 +301,8 @@ fig_right.update_layout(
         )
     ]
 )
-fig_right.update_xaxes(fixedrange=True)
-fig_right.update_yaxes(fixedrange=True)
+# Allow panning/zooming by removing fixedrange
+# fig_right.update_xaxes(fixedrange=True)
+# fig_right.update_yaxes(fixedrange=True)
 
 st.plotly_chart(fig_right, use_container_width=False)
