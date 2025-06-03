@@ -85,7 +85,6 @@ fig_right.update_layout(
         showgrid=False,
         title_text="Units of 🟠",
     )
-    ]
 )
 # Disable zooming/scrolling by fixing both axes
 fig_right.update_xaxes(fixedrange=True)
