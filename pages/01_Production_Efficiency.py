@@ -47,8 +47,7 @@ def generate_random_points_global(num_points: int = 30, seed: int = 42):
     return x_rand, y_rand
 
 # ─── Title ───────────────────────────────────────────────────────────────────
-st.title("PPF Curve + Random Points")
-
+st.title("Production Possibility Curve")
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'L' not in st.session_state:
     st.session_state.L = 20
@@ -61,6 +60,11 @@ L   = st.session_state.L
 e_x = st.session_state.e_x
 e_y = st.session_state.e_y
 
+st.markdown('''The Production Possibility tells us the limits of what we can produce assuming we can only produce two things frogs and oranges. 
+Formally Khan academy defines the Producion possibility curve as a model used to show the tradeoffs associated with allocating resources between the production of two goods. ''')
+st.write("**What do you think the points on the graph represent**")
+with st.expander("Hint: If the model graphs the tradeoff of production then"):
+    st.write("each point must be some production of the two resources")
 # ─── Generate PPF curve and random points ────────────────────────────────────
 x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 
@@ -99,7 +103,7 @@ fig_left.add_trace(
         y=y_near,
         mode='markers',
         marker=dict(color='red', size=9, line=dict(color='black', width=1)),
-        name=f'Efficient (≤ {tolerance})'
+        name=f'red'
     )
 )
 fig_left.add_trace(
@@ -108,7 +112,7 @@ fig_left.add_trace(
         y=y_inside,
         mode='markers',
         marker=dict(color='yellow', size=9, line=dict(color='black', width=1)),
-        name='Inefficent (> 2 units)'
+        name='yellow'
     )
 )
 fig_left.add_trace(
@@ -117,7 +121,7 @@ fig_left.add_trace(
         y=y_outside,
         mode='markers',
         marker=dict(color='white', size=9, line=dict(color='black', width=1)),
-        name='Impossible'
+        name='white'
     )
 )
 
@@ -157,7 +161,7 @@ st.markdown("---")
 # ─── Sliders for L, e_x, e_y (at the bottom) ────────────────────────────────
 col1, col2 = st.columns(2)
 with col1:
-    st.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
-    st.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
+    st.slider("Total Labour ", 1, MAX_L, value=L, step=1, key="L")
+    st.slider("Efficiency 🐸 ", 1, MAX_e_x, value=e_x, step=1, key="e_x")
 with col2:
-    st.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
+    st.slider("Efficiency 🟠 ", 1, MAX_e_y, value=e_y, step=1, key="e_y")
