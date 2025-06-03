@@ -54,12 +54,14 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
 
 # ─── Title ───────────────────────────────────────────────────────────────────
 st.title("Moving Along the PPC")
-st.markdown('''Begin by playing around with the graph. What happens if the resource or efficiency increases? Does the magnitude of the slope change as move along the curve? What do you think this means?''')
 st.write("**What do you think the magnitude of the slope means?**")
 with st.expander("**Hint**: Recall the magnitude slope tells us how changing the number of frogs produce changes the number of oranges produced"):
     st.write(""" The slope tells use the amount of frogs we have to give up in order to produce more oranges and vice versa. This _trade off_ is a very specific instant of a more general concept, _the opportunity cost_.
      """)
-
+st.markdown('''Play around with the graph. What happens if the resource or efficiency increases? How does the slope change as move along the curve? What do you think this means?''')
+with st.expander(""):
+    st.write(""" The bowed curve of the PPF here implies that the opportunity cost is much cheaper the more you want to produce one thing
+     """)
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'L' not in st.session_state:
     st.session_state.L = 20
