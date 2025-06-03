@@ -15,7 +15,7 @@ st.write("**Questions look like this**")
 
 with st.expander("Click to show answer"):
     st.write("""
-   For questions spend time thinking about the answers, use the graph to help but make sure to not peak unless you get very stuck :)""")
+   For questions spend time thinking about the answers, use the graph to help but make sure to not peek unless you get very stuck :)""")
 st.markdown('')
 
 st.write('Experimentation is done through interactive graphs with widgets')
