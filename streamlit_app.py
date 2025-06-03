@@ -26,8 +26,11 @@ with st.expander(""):
      """)
 
 st.markdown("#### References")
-st.multiline("""
-[1] Santa Ana College. “Inquiry-Based Learning.” Sac.edu, 2024, sac.edu/AcademicAffairs/TracDat/Pages/Inquiry-Based-Learning-.aspx.
-[2] de Jong, Ton, et al. “Let’s Talk Evidence – the Case for Combining Inquiry-Based and Direct Instruction.” Educational Research Review, 
+st.markdown("""
+### References
+
+1. Santa Ana College. “Inquiry-Based Learning.” Sac.edu, 2024, sac.edu/AcademicAffairs/TracDat/Pages/Inquiry-Based-Learning-.aspx.
+2. de Jong, Ton, et al. “Let’s Talk Evidence – the Case for Combining Inquiry-Based and Direct Instruction.” Educational Research Review, 
 vol. 39, no. 39, May 2023, p. 100536, www.sciencedirect.com/science/article/pii/S1747938X23000295, https://doi.org/10.1016/j.edurev.2023.100536.
 """)
+
