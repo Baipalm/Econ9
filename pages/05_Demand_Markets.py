@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 # ----------------------------------------
 # 1) Set up wide layout and page title
 st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
-st.title("Side-by-Side Demand Curves (with ΔQ & ΔP Display)")
+st.title("Side-by-Side Demand Curves ")
 
 # ----------------------------------------
 # 2) Add a sidebar control for Substitutes vs. Complements
