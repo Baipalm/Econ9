@@ -8,7 +8,8 @@ If a person who does not knwo any economics is able to grasp intuitively how the
 modes, questions and experimentations.''')
 st.header('How to use this site')
 st.markdown('''The site consists of two 
-modes, - questions   
+modes:
+- questions   
 - experimentations.''')
 st.write("**Questions look like this**")
 
@@ -17,7 +18,7 @@ with st.expander("Click to show answer"):
    For questions spend time thinking about the answers, use the graph to help but make sure to not peak unless you get very stuck :)""")
 st.markdown('')
 
-st.write('Graphs with widgets are like this')
+st.write('Experimentation is done through interactive graphs with widgets (try moving it!)')
 import streamlit as st
 
 st.title("Slider-Controlled Text Reveal")
