@@ -6,7 +6,20 @@ import plotly.graph_objects as go
 # 1) Set up wide layout and page title
 st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
 st.title("Side-by-Side Demand Curves ")
+st.markdown('In most cases the the demand of one market can have an impact on another. Why might this happen? Can we say what effect the demand of one market has on another? this leads use to define how the markets effect each other.')
+st.markdown(''' 
+**Definition: Substitutes goods**  
+ Complementary goods are products that decrease in value when the demand for relative products increases. [1].
+''')
+st.markdown(''' 
+**Definition: Complementary goods**  
+ Complementary goods are products that increase in value when the demand for relative products increases. [2].
+''')
+st.write("**Why Is it natural to define relationship this way?**")
 
+with st.expander("Hint: Think about the difference between a shift and movement"):
+    st.write(""" Since we want the change in price to be true fpor the whole market the shift in demand makes sense. Conversely some change in demand means the entire price and quantity changed which naturallhy causes the movement we see.
+     """)
 # ----------------------------------------
 # 2) Add a sidebar control for Substitutes vs. Complements
 mode = st.sidebar.radio(
@@ -178,3 +191,12 @@ st.slider(
     step=0.1, 
     key="x_left"
 )
+
+st.markdown("""
+### References
+
+1. Hayes, Adam. “How Substitutes Work.” Investopedia, 31 July 2024, www.investopedia.com/terms/s/substitute.asp.
+2. “Guide to Complementary Goods: Definition and Examples.” Indeed Career Guide, 2024, www.indeed.com/career-advice/career-development/complementary-goods.
+""")
+
+
