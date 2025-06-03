@@ -2,29 +2,22 @@ import streamlit as st
 import numpy as np
 import plotly.graph_objects as go
 
-# ── Constants for slider maximums ────────────────────────────────────────────
 MAX_R   = 40
 MAX_e_x = 20
 MAX_e_y = 20
 
-# Precompute the “global” axis intercepts (when L=MAX_L, e_x=MAX_e_x, e_y=MAX_e_y)
-GLOBAL_x_max = MAX_e_x * np.sqrt(MAX_L)   # ≈ 20 * √40
-GLOBAL_y_max = MAX_e_y * np.sqrt(MAX_L)   # ≈ 20 * √40
+GLOBAL_x_max = MAX_e_x * np.sqrt(MAX_R)   
+GLOBAL_y_max = MAX_e_y * np.sqrt(MAX_R)  
 
 @st.cache_data
-def generate_curve(e_x: int, e_y: int, L: int, num_curve_pts: int = 500):
-    """
-    Returns:
-      - x_curve, y_curve: NumPy arrays of length (num_curve_pts+2),
-        with endpoints (0, y_max) and (x_max, 0) included,
-      - x_max, y_max: the axis intercepts, where x_max = e_x * √L, y_max = e_y * √L.
-    """
-    x_max = e_x * np.sqrt(L)
-    y_max = e_y * np.sqrt(L)
+def generate_curve(e_x: int, e_y: int, R: int, num_curve_pts: int = 500):
+    
+    x_max = e_x * np.sqrt(R)
+    y_max = e_y * np.sqrt(R)
 
     # Dense points on [0, x_max]
     x_dense = np.linspace(0.0, x_max, num_curve_pts)
-    inside = L - (x_dense / e_x) ** 2
+    inside = R - (x_dense / e_x) ** 2
     inside[inside < 0] = 0.0
     y_dense = e_y * np.sqrt(inside)
 
@@ -34,18 +27,15 @@ def generate_curve(e_x: int, e_y: int, L: int, num_curve_pts: int = 500):
 
     return x_curve, y_curve, x_max, y_max
 
-def compute_ppf_y(x: float, e_x: int, e_y: int, L: int) -> float:
-    """
-    Compute y = e_y * sqrt(L - (x/e_x)^2) for one x.
-    If inside-sqrt < 0, return 0.
-    """
-    inside = L - (x / e_x) ** 2
+def compute_ppf_y(x: float, e_x: int, e_y: int, R: int) -> float:
+    
+    inside = R - (x / e_x) ** 2
     return float(e_y * np.sqrt(max(inside, 0.0)))
 # ─── Title ───────────────────────────────────────────────────────────────────
 st.title("Production Possibility Curve")
 st.markdown(''' 
 **Production Possibility Curve**  
-_Production Possibility Curve_ is a representation of the possibility of production of two commodities given some fixed resource _R_.
+_Production Possibility Curve_ is a representation of the possibility of production of two commodities given some fixed resource _R_ [1].
 ''')
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'R' not in st.session_state:
