@@ -5,7 +5,16 @@ import plotly.graph_objects as go
 # ----------------------------------------
 # 1) Set up wide layout and page title
 st.set_page_config(page_title="Interactive Supply Curve", layout="wide")
-st.title("Linear Curve (P = Q + Constant) with Movable Point and Vertical Shift")
+st.title("Linear Curve with Movable Point and Vertical Shift")
+st.markdown(''' 
+**Definition: Supply Curve**  
+_Production Possibility Curve_ is a representation of the relation between the quantity the producer is willing and able to produce with respect to the price [1].
+''')
+st.write("**Why do you think the curve has a positive slope**")
+
+with st.expander("**Hint**: What motivates production"):
+    st.write("""Producers are more willing to produce things which cost more.
+     """)
 
 # ----------------------------------------
 # 2) Persist slider values in session_state (movement and shift)
@@ -106,4 +115,8 @@ st.plotly_chart(
     config={"staticPlot": True},
     key="combined_linear_curve"
 )
+st.markdown("""
+### References
 
+1. “Britannica Money.” _Www.britannica.com_, www.britannica.com/money/supply-curve..
+""")
