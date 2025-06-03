@@ -22,10 +22,15 @@ with st.expander(""):
 st.write("**Is Inquiry based learning better than direct instruction**")
 
 with st.expander(""):
-    st.write(""" No, not necessarily according to science direct there are proponents to both sides and many even prefer direction![2]
+    st.write(""" No, not necessarily according to science direct there are proponents to both sides and many even prefer direction![2] Still this provides an entirely new way to engage with the material!
+     """)
+st.write("**Why question and experimentation?**")
+
+with st.expander(""):
+    st.write(""" One of the core tenets is guide the learner and these question provide nudges in the right direction. Experimentation plays into curiosity and helps the learner gain a more complete view of the subject.
      """)
 
-st.markdown("#### References")
+
 st.markdown("""
 ### References
 
