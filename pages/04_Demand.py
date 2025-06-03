@@ -5,8 +5,16 @@ import plotly.graph_objects as go
 # ----------------------------------------
 # 1) Set up wide layout and page title
 st.set_page_config(page_title="Interactive Demand Curve", layout="wide")
-st.title("Demand Curve with Movable Point and Vertical Shift")
+st.title("Demand Curve")
+st.markdown(''' 
+**Definition: Demand Curve**  
+_Demand Curve_ is a representation of the _price_ and the _quantity demanded_ [1].
+''')
+st.write("**Why do you think the curve has a negative slope**")
 
+with st.expander("**Hint**: What happens when you want to buy something but the price increases"):
+    st.write(""" Because the more expensitve something is the less desireble. This relationship is called the _law of demand_.
+     """)
 # ----------------------------------------
 # 2) Persist slider values in session_state (movement and shift)
 if "x_pos" not in st.session_state:
@@ -105,3 +113,7 @@ st.plotly_chart(
     config={"staticPlot": True},
     key="combined_demand_curve"
 )
+st.markdown(''' 
+**Definition: Law of  Demand**  
+_Law of Demand_ shows the inverse relationship between price and quantity [2].
+''')
