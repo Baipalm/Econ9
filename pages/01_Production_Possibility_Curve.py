@@ -49,7 +49,7 @@ with st.expander("**Hint**: What does increasing production of oranges mean for 
     
 st.write("Play around with the amount of resource available, what does the area inside and outside the curve mean?")
 
-with st.expander("**Hint**: Look at the definition of what the line represents"):
+with st.expander("**Hint**: Look at the definition of what the line represents")
     st.markdown(""" The area inside the curve represent possible productions of frogs and oranges while the area outside the curve represents 
     productions which are impossible. We will explore more about this next page. Continue down for now.
     """)
