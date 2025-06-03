@@ -33,10 +33,19 @@ def compute_ppf_y(x: float, e_x: int, e_y: int, R: int) -> float:
     return float(e_y * np.sqrt(max(inside, 0.0)))
 # ─── Title ───────────────────────────────────────────────────────────────────
 st.title("Production Possibility Curve")
+# Definition
 st.markdown(''' 
-**Definition: Production Possibility Curve**  
+**Definition: Production Possibility Curve (PPC)**  
 _Production Possibility Curve_ is a representation of the possibility of production of two commodities given some fixed resource _R_ [1].
 ''')
+# Question 1
+st.write("**Why is the PPC shaped like this?**")
+
+with st.expander("**Hint**: What does increasing production of oranges mean for frogs"):
+    st.markdown(""" Since the resource we have is finite, producing more oranges means we have to
+    give up the ability to produce the more frogs. This idea that we must make _trade offs_ between
+    frogs and oranges is central to economics!
+     """)
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'R' not in st.session_state:
     st.session_state.R = 20
@@ -94,3 +103,9 @@ st.markdown("---")
 
 st.sidebar.slider("Resource", 1, MAX_R, value=R, step=1, key="R")
 
+st.markdown("#### References")
+st.markdown("""
+### References
+
+1. The. “Production Possibility Frontier.” The Economic Times, 2025, economictimes.indiatimes.com/definition/production-possibility-frontier?from=mdr.
+""")
