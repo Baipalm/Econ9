@@ -4,112 +4,91 @@ import plotly.graph_objects as go
 
 # ----------------------------------------
 # 1) Set up wide layout and page title
-st.set_page_config(page_title="Interactive Demand Curves", layout="wide")
-st.title("Combined Demand Curves (with ΔQ & ΔP Display)")
+st.set_page_config(page_title="Interactive Demand Curve", layout="wide")
+st.title("Demand Curve with Movable Point and Vertical Shift")
 
 # ----------------------------------------
-# 2) Add a sidebar control for Substitutes vs. Complements
-mode = st.sidebar.radio(
-    label="Product Relationship",
-    options=["Substitutes", "Complements"],
-    index=0  # default to “Substitutes”
+# 2) Persist slider values in session_state (movement and shift)
+if "x_pos" not in st.session_state:
+    st.session_state.x_pos = 2.5
+if "vertical_shift" not in st.session_state:
+    st.session_state.vertical_shift = 0.0
+
+# ----------------------------------------
+# 3) Sliders: one for horizontal movement, one for vertical shift
+x_pos = st.slider(
+    label="Quantity (Move Point Horizontally)",
+    min_value=0.0,
+    max_value=5.0,
+    value=st.session_state.x_pos,
+    step=0.1,
+    key="x_pos"
+)
+
+vertical_shift = st.slider(
+    label="Vertical Shift of Curve (ΔP)",
+    min_value=-5.0,
+    max_value=5.0,
+    value=st.session_state.vertical_shift,
+    step=0.1,
+    key="vertical_shift"
 )
 
 # ----------------------------------------
-# 3) Persist slider value in session_state
-if "x_left" not in st.session_state:
-    st.session_state.x_left = 2.5
-x_left = st.session_state.x_left
-
-# Compute price on the original demand curve:
-y_left = -x_left + 5
-
-# ----------------------------------------
-# 4) Compute vertical shift ΔP for the right curve
-delta_raw = y_left - 2.5
-if mode == "Substitutes":
-    delta_p = delta_raw
-else:  # Complements
-    delta_p = -delta_raw
-
-# ----------------------------------------
-# 5) Compute ΔQ and ΔP for display
-delta_q_left   = x_left - 2.5
-delta_p_left   = delta_raw
-delta_q_right  = 0.0          # right Q always 2.5
-delta_p_right  = delta_p
-
-col_change_left, col_change_right = st.columns(2)
-with col_change_left:
-    st.markdown(f"**Left ΔQ: {delta_q_left:.2f}, ΔP: {delta_p_left:.2f}**")
-with col_change_right:
-    st.markdown(f"**Right ΔQ: {delta_q_right:.2f}, ΔP: {delta_p_right:.2f}**")
-
-# ----------------------------------------
-# 6) Prepare x‐values & basic formulas
+# 4) Compute the two curves and the single dot
+# Original demand:     P = –Q + 5
+# Shifted demand:      P = –Q + (5 + vertical_shift)
 x_vals = np.linspace(0, 10, 100)
-y_vals_original = -x_vals + 5                  # Original: P = –Q + 5
-intercept_shifted = 5.0 + delta_p
-y_vals_shifted  = -x_vals + intercept_shifted  # Shifted: P = –Q + (5 + ΔP)
+y_original = -x_vals + 5
+intercept_shifted = 5.0 + vertical_shift
+y_shifted = -x_vals + intercept_shifted
 
-# Compute the red‐dot positions:
-# ‣ Left marker at (x_left, y_left)
-x_marker_left = x_left
-y_marker_left = y_left
-
-# ‣ Right marker at Q = 2.5
-x_marker_right = 2.5
-y_marker_right = -2.5 + intercept_shifted
+# Dot is placed on the shifted curve at x = x_pos
+x_dot = x_pos
+y_dot = -x_pos + intercept_shifted
 
 # ----------------------------------------
-# 7) Build a single combined Plotly figure
+# 5) Build a single Plotly figure with both curves + 1 dot
 fig = go.Figure()
 
-# 7a) Add original demand curve + marker
+# 5a) Original demand curve (crimson fill)
 fig.add_trace(
     go.Scatter(
         x=x_vals,
-        y=y_vals_original,
+        y=y_original,
         mode="lines",
         fill="tozeroy",
         line=dict(color="crimson"),
-        name="Original: P = –Q + 5",
-    )
-)
-fig.add_trace(
-    go.Scatter(
-        x=[x_marker_left],
-        y=[y_marker_left],
-        mode="markers",
-        marker=dict(color="red", size=12),
-        name="Left Dot (on P=–Q+5)",
+        name="Original: P = –Q + 5"
     )
 )
 
-# 7b) Add shifted demand curve + marker
+# 5b) Shifted demand curve (navy fill)
 fig.add_trace(
     go.Scatter(
         x=x_vals,
-        y=y_vals_shifted,
+        y=y_shifted,
         mode="lines",
         fill="tozeroy",
         line=dict(color="navy"),
-        name=f"Shifted: P = –Q + {intercept_shifted:.2f}",
-    )
-)
-fig.add_trace(
-    go.Scatter(
-        x=[x_marker_right],
-        y=[y_marker_right],
-        mode="markers",
-        marker=dict(color="red", size=12, symbol="diamond"),
-        name="Right Dot (on Shifted Curve)",
+        name=f"Shifted: P = –Q + {intercept_shifted:.2f}"
     )
 )
 
-# 7c) Update layout to show both on one set of axes
+# 5c) Single red dot at (x_dot, y_dot)
+fig.add_trace(
+    go.Scatter(
+        x=[x_dot],
+        y=[y_dot],
+        mode="markers",
+        marker=dict(color="red", size=12),
+        name="Movable Point"
+    )
+)
+
+# 5d) Update layout so both curves share axes
 fig.update_layout(
-    title="Combined Demand Curves",
+    title="Demand Curve with Movable Point and Vertical Shift",
     xaxis=dict(title="Quantity Demanded", range=[0, 10], fixedrange=True),
     yaxis=dict(title="Price",              range=[0, 10], fixedrange=True),
     width=800,
@@ -119,21 +98,10 @@ fig.update_layout(
 )
 
 # ----------------------------------------
-# 8) Display the combined figure
+# 6) Display the combined figure
 st.plotly_chart(
     fig,
     use_container_width=False,
     config={"staticPlot": True},
     key="combined_demand_curve"
-)
-
-# ----------------------------------------
-# 9) Finally, render the slider below
-st.slider(
-    label="Move Left Circle (Quantity)", 
-    min_value=0.0, 
-    max_value=5.0, 
-    value=st.session_state.x_left, 
-    step=0.1, 
-    key="x_left"
 )
