@@ -159,9 +159,9 @@ st.plotly_chart(
 st.markdown("---")
 
 # ─── Sliders for L, e_x, e_y (at the bottom) ────────────────────────────────
-col1, col2 = st.columns(2)
-with col1:
-    st.slider("Total Labour ", 1, MAX_L, value=L, step=1, key="L")
-    st.slider("Efficiency 🐸 ", 1, MAX_e_x, value=e_x, step=1, key="e_x")
-with col2:
-    st.slider("Efficiency 🟠 ", 1, MAX_e_y, value=e_y, step=1, key="e_y")
+# ─── Sliders in the sidebar ────────────────────────────────
+
+st.sidebar.slider("Total Labour",    1, MAX_L,   value=L,   step=1, key="L")
+st.sidebar.slider("Efficiency 🐸",   1, MAX_e_x, value=e_x, step=1, key="e_x")
+st.sidebar.slider("Efficiency 🟠",   1, MAX_e_y, value=e_y, step=1, key="e_y")
+
