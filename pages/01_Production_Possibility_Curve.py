@@ -46,7 +46,9 @@ with st.expander("**Hint**: What does increasing production of oranges mean for 
     give up the ability to produce the more frogs. This idea that we must make choices between
     frogs and oranges is central to economics!
      """)
+    
 st.write("Play around with the amount of resource available, what does the area inside and outside the curve mean?")
+
 with st.expander("**Hint**: Look at the definition of what the line represents"):
     st.markdown(""" The area inside the curve represent possible productions of frogs and oranges while the area outside the curve represents 
     productions which are impossible. We will explore more about this next page. Continue down for now.
@@ -105,6 +107,9 @@ st.plotly_chart(
 )
 
 st.markdown("---")
+
+st.sidebar.slider("Resource", 1, MAX_R, value=R, step=1, key="R")
+
 st.markdown(''' 
 **Definition: Economics**  
 _Economics_ is the study of how society manages it's _scarce_ resources [2].
@@ -115,7 +120,6 @@ st.markdown("""_scarcity_ refers to the limitations on the amount of goods and s
 The maximum amount of something that can be produced""")
 
 
-st.sidebar.slider("Resource", 1, MAX_R, value=R, step=1, key="R")
 
 st.markdown("#### References")
 st.markdown("""
