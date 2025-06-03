@@ -18,10 +18,10 @@ with st.expander("Click to show answer"):
    For questions spend time thinking about the answers, use the graph to help but make sure to not peak unless you get very stuck :)""")
 st.markdown('')
 
-st.write('Experimentation is done through interactive graphs with widgets (try moving it!)')
+st.write('Experimentation is done through interactive graphs with widgets')
 import streamlit as st
 
-st.title("Slider-Controlled Text Reveal")
+
 
 # 1) Define the full text you want to reveal
 full_text = """\
@@ -34,7 +34,7 @@ max_chars = len(full_text)
 # 3) Render a slider from 0→max_chars
 #    As you move the slider, the app reruns and displays text[:n_chars]
 n_chars = st.slider(
-    label="Reveal how many characters:",
+    label="Slide me!:",
     min_value=0,
     max_value=max_chars,
     value=0,
