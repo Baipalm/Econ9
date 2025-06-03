@@ -51,8 +51,8 @@ st.write("**Play around with the amount of resource available, what does the are
 
 with st.expander("**Hint**: Look at the definition of what the line represents"):
     st.write(""" The area inside the curve represent possible productions of frogs and oranges while the area outside the curve represents 
-    productions which are impossible. We will explore more about this next page. Continue down for now.
-    """)
+        productions which are impossible. We will explore more about this next page. Continue down for now.
+        """)
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'R' not in st.session_state:
     st.session_state.R = 20
