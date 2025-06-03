@@ -115,9 +115,9 @@ st.markdown('''
 _Economics_ is the study of how society manages it's _scarce_ resources [2].
 ''')
 st.write("**What is meant by scarce?  How is this shown in the graph above? **")
-with st.expander("**Hint**: When do you have enough resources? "):
-st.write("""_scarcity_ refers to the limitations on the amount of goods and services we can produce [3]. This is shown in the line of the production possibility curve. 
-The maximum amount of something that can be produced""")
+    with st.expander("**Hint**: When do you have enough resources? "):
+    st.write("""_scarcity_ refers to the limitations on the amount of goods and services we can produce [3]. This is shown in the line of the production possibility curve. 
+        The maximum amount of something that can be produced""")
 
 
 
