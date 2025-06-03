@@ -39,7 +39,7 @@ x_pos = st.sidebar.slider(
     key="x_pos"
 )
 
-vertical_shift = st.sidebarslider(
+vertical_shift = st.sidebar.slider(
     label="Vertical Shift of Curve (ΔP)",
     min_value=-5.0,
     max_value=5.0,
