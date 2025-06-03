@@ -163,11 +163,11 @@ st.markdown("---")
 # ─── Sliders for L, e_x, e_y, and x_move (at the bottom) ────────────────────
 col1, col2 = st.columns(2)
 with col1:
-    st.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
-    st.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
+    st.sidebar.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
+    st.sidebar.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
 with col2:
-    st.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
-    st.slider(
+    st.sidebar.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
+    st.sidebar.slider(
         "Move a point along the frontier (🐸 axis)",
         min_value=0.0,
         max_value=float(x_max),
