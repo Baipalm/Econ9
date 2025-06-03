@@ -41,11 +41,16 @@ _Production Possibility Curve_ is a representation of the possibility of product
 # Question 1
 st.write("**Why is the PPC shaped like this?**")
 
-with st.expander("**Hint**: What does increasing production of oranges mean for frogs"):
+with st.expander("**Hint**: What does increasing production of oranges mean for the production of frogs"):
     st.markdown(""" Since the resource we have is finite, producing more oranges means we have to
-    give up the ability to produce the more frogs. This idea that we must make _trade offs_ between
+    give up the ability to produce the more frogs. This idea that we must make choices between
     frogs and oranges is central to economics!
      """)
+st.write("Play around with the amount of resource available, what does the area inside and outside the curve mean?")
+with st.expander("**Hint**: Look at the definition of what the line represents"):
+    st.markdown(""" The area inside the curve represent possible productions of frogs and oranges while the area outside the curve represents 
+    productions which are impossible. We will explore more about this next page. Continue down for now.
+    """)
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'R' not in st.session_state:
     st.session_state.R = 20
@@ -100,6 +105,15 @@ st.plotly_chart(
 )
 
 st.markdown("---")
+st.markdown(''' 
+**Definition: Economics**  
+_Economics_ is the study of how society manages it's _scarce_ resources [2].
+''')
+st.write("**What is meant by scarce?  How is this shown in the graph above? **")
+with st.expander("**Hint**: When do you have enough resources? ")
+st.markdown("""_scarcity_ refers to the limitations on the amount of goods and services we can produce [3]. This is shown in the line of the production possibility curve. 
+The maximum amount of something that can be produced""")
+
 
 st.sidebar.slider("Resource", 1, MAX_R, value=R, step=1, key="R")
 
@@ -108,4 +122,6 @@ st.markdown("""
 ### References
 
 1. The. “Production Possibility Frontier.” The Economic Times, 2025, economictimes.indiatimes.com/definition/production-possibility-frontier?from=mdr.
+2. https://www.worldeconomicsassociation.org/commentaries/hill-mankiw9ed-ch1/
+3. https://www.econlib.org/library/Topics/College/scarcity.html
 """)
