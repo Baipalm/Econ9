@@ -15,6 +15,12 @@ st.write("**Why do you think the curve has a negative slope**")
 with st.expander("**Hint**: What happens when you want to buy something but the price increases"):
     st.write(""" Because the more expensitve something is the less desireble. This relationship is called the _law of demand_.
      """)
+
+st.write("**Play around with the graph what do you think the difference between a shift of demand curve and a movement along the demand curve**")
+
+with st.expander("**Hint**: What happens to the points"):
+    st.write(""" A shift in demand changes the price and quantity demanded at all points along the curve whereas the movement does not change this relationship.
+     """)
 # ----------------------------------------
 # 2) Persist slider values in session_state (movement and shift)
 if "x_pos" not in st.session_state:
@@ -24,7 +30,7 @@ if "vertical_shift" not in st.session_state:
 
 # ----------------------------------------
 # 3) Sliders: one for horizontal movement, one for vertical shift
-x_pos = st.slider(
+x_pos = st.sidebar.slider(
     label="Quantity (Move Point Horizontally)",
     min_value=0.0,
     max_value=5.0,
@@ -33,7 +39,7 @@ x_pos = st.slider(
     key="x_pos"
 )
 
-vertical_shift = st.slider(
+vertical_shift = st.sidebarslider(
     label="Vertical Shift of Curve (ΔP)",
     min_value=-5.0,
     max_value=5.0,
@@ -117,3 +123,11 @@ st.markdown('''
 **Definition: Law of  Demand**  
 _Law of Demand_ shows the inverse relationship between price and quantity [2].
 ''')
+st.markdown("#### References")
+st.markdown("""
+### References
+
+1. “Demand Curve Definition | Britannica Money.” Www.britannica.com, www.britannica.com/money/demand-curve.
+2. Hayes, Adam. “What Is the Law of Demand in Economics, and How Does It Work?” Investopedia, 24 June 2024, www.investopedia.com/terms/l/lawofdemand.asp.
+""")
+st.write("**Why Inquiry Based Learning and Economics?**")
