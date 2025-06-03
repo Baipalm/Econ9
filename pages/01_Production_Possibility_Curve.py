@@ -124,6 +124,6 @@ st.markdown("""
 ### References
 
 1. The. “Production Possibility Frontier.” The Economic Times, 2025, economictimes.indiatimes.com/definition/production-possibility-frontier?from=mdr.
-2. https://www.worldeconomicsassociation.org/commentaries/hill-mankiw9ed-ch1/
-3. https://www.econlib.org/library/Topics/College/scarcity.html
+2. Mankiw, Nicholas. “Hill – Mankiw 9th Edn Chapter 1: Ten Principles of Economics | World Economics Association.” Www.worldeconomicsassociation.org, www.worldeconomicsassociation.org/commentaries/hill-mankiw9ed-ch1/.
+3. “Scarcity.” Econlib, www.econlib.org/library/Topics/College/scarcity.html.
 """)
