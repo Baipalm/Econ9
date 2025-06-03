@@ -53,7 +53,12 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
     return - (e_y * x_pt) / (e_x**2 * np.sqrt(inside))
 
 # ─── Title ───────────────────────────────────────────────────────────────────
-st.title("Opportunity Cost along the PPF curve")
+st.title("Moving Along the PPC")
+st.markdown('''Begin by playing around with the graph. What happens if the resource or efficiency increases? Does the magnitude of the slope change as move along the curve?''')
+st.write("**What do you think the magnitude of the slope means?**")
+with st.expander("**Hint**: Recall the magnitude slope tells us how changing the number of frogs produce changes the number of oranges produced"):
+    st.write(""" The slope tells use the amount of frogs we have to give up in order to produce more oranges and vice versa. This _trade off_ is a very specific instant of a more general concept, _the opportunity cost_.
+     """)
 
 # ─── Session State for sliders ────────────────────────────────────────────────
 if 'L' not in st.session_state:
@@ -141,7 +146,7 @@ fig_right.update_layout(
         dict(
             x=0.95, y=0.95,
             xref='paper', yref='paper',
-            text=f"Opportunity cost: {abs(slope_at_move):.2f}",
+            text=f" {abs(slope_at_move):.2f}",
             showarrow=False,
             font=dict(size=18, color="darkorange")
         )
@@ -163,7 +168,7 @@ st.markdown("---")
 # ─── Sliders for L, e_x, e_y, and x_move (at the bottom) ────────────────────
 col1, col2 = st.columns(2)
 with col1:
-    st.sidebar.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
+    st.sidebar.slider("Resource", 1, MAX_L, value=L, step=1, key="L")
     st.sidebar.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
 with col2:
     st.sidebar.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
