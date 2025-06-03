@@ -84,20 +84,7 @@ fig_right.update_layout(
         range=[0, GLOBAL_y_max * 1.02],
         showgrid=False,
         title_text="Units of 🟠",
-    ),
-    plot_bgcolor="rgba(0,0,0,0)",
-    paper_bgcolor="rgba(0,0,0,0)",
-    width=700,
-    height=500,
-    margin=dict(l=20, r=20, t=20, b=20),
-    annotations=[
-        dict(
-            x=0.95, y=0.95,
-            xref='paper', yref='paper',
-            text=f"Opportunity cost: {abs(slope_at_move):.2f}",
-            showarrow=False,
-            font=dict(size=18, color="darkorange")
-        )
+    )
     ]
 )
 # Disable zooming/scrolling by fixing both axes
