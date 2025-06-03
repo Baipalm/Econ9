@@ -1,3 +1,5 @@
+import streamlit as st
+
 st.header('On Inquiry Based Learning ')
 st.write("**What is Inquiry Based Learning?**")
 
