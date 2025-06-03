@@ -60,11 +60,10 @@ L   = st.session_state.L
 e_x = st.session_state.e_x
 e_y = st.session_state.e_y
 
-st.markdown('''The Production Possibility tells us the limits of what we can produce assuming we can only produce two things frogs and oranges. 
-Formally Khan academy defines the Producion possibility curve as a model used to show the tradeoffs associated with allocating resources between the production of two goods. ''')
+st.markdown('''The Production Possibility Curve tells us the limits of what we can produce assuming we can only produce two things frogs and oranges. Below are three sliders. Try them. ''')
 st.write("**What do you think the points on the graph represent**")
-with st.expander("Hint: If the model graphs the tradeoff of production then"):
-    st.write("each point must be some production of the two resources")
+with st.expander("**Hint**: If the model graphs the tradeoff of production then..."):
+    st.write("...each point must be some production of the two resources")
 # ─── Generate PPF curve and random points ────────────────────────────────────
 x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
 
@@ -156,11 +155,18 @@ st.plotly_chart(
     config={'staticPlot': True}
 )
 
-st.write("**Why do you think that the graph looks like this?**")
-with st.expander("Hint: Think about how it would work in real life"):
-    st.markdown("""Since we have a finite about of time and resources. The resource and time we spend on producing frogs can't be used to produce oranges. This is this the fundamental problem of economics.
-    It is that everything is scarce.""")
+st.write("**What do you think the color represents**")
+with st.expander("Hint: Think of what it means top be inside or outside the curve."):
+    st.markdown("""
+    1. Yellow means it is possible to produce
+    2. Red means that it is the maximum you can produce of a certain number of frogs and oranges
+    3. White means that it is impossible to produce
+    """)
+st.write("**When do you think some production of monkeys and oranges is efficient**")
+with st.expander("Hint: What do the colors mean."):
+    st.markdown(""" When the production is on the line or the point is red""")
 
+st.markdown('Play around with the size of the production curve, Is it possible to get all points to be Red?')
 # ─── Sliders for L, e_x, e_y (at the bottom) ────────────────────────────────
 # ─── Sliders in the sidebar ────────────────────────────────
 
