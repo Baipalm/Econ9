@@ -156,7 +156,10 @@ st.plotly_chart(
     config={'staticPlot': True}
 )
 
-st.markdown("---")
+st.write("**Why do you think that the graph looks like this?**")
+with st.expander("Hint: Think about how it would work in real life"):
+    st.markdown("""Since we have a finite about of time and resources. The resource and time we spend on producing frogs can't be used to produce oranges. This is this the fundamental problem of economics.
+    It is that everything is scarce.""")
 
 # ─── Sliders for L, e_x, e_y (at the bottom) ────────────────────────────────
 # ─── Sliders in the sidebar ────────────────────────────────
