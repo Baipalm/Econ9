@@ -67,7 +67,7 @@ fig_right.add_trace(
         x=x_curve,
         y=y_curve,
         mode='lines',
-        line=dict(color='royalblue', width=2),
+        line=dict(color='royalblue', width=2,fill='tozeroy'),
         name='PPF Curve'
     )
 )
