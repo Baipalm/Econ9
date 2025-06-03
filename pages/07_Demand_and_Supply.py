@@ -3,7 +3,10 @@ import numpy as np
 import plotly.graph_objects as go
 
 # Title
-st.title("Interactive Supply & Demand with Guaranteed On-Screen Equilibrium")
+st.title("Interactive Supply & Demand ")
+st.markdown("""Now with both supply and demand we can consider the relationship between the graphs. How do you think they are related? Try shifting the demand and supply graphs""")
+
+st.markdown('what do you think green equilibrium point mean?')
 
 # Base intercepts
 BASE_SUPPLY_INTERCEPT = 0.0   # Supply: P = Q + (0 + shift_supply)
@@ -125,3 +128,4 @@ st.plotly_chart(
         "displayModeBar": False
     }
 )
+st.markdonw('How does the equilibrium change as a result of the shifts? Explain')
