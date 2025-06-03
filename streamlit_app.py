@@ -34,7 +34,7 @@ max_chars = len(full_text)
 # 3) Render a slider from 0→max_chars
 #    As you move the slider, the app reruns and displays text[:n_chars]
 n_chars = st.slider(
-    label="Slide me!:",
+    label="Slide me!",
     min_value=0,
     max_value=max_chars,
     value=0,
