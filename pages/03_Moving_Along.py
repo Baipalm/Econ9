@@ -169,11 +169,11 @@ st.markdown("---")
 col1, col2 = st.columns(2)
 with col1:
     st.sidebar.slider("Resource", 1, MAX_L, value=L, step=1, key="L")
-    st.sidebar.slider("Efficiency 🐸 (e_x)", 1, MAX_e_x, value=e_x, step=1, key="e_x")
+    st.sidebar.slider("Efficiency 🐸 ", 1, MAX_e_x, value=e_x, step=1, key="e_x")
 with col2:
-    st.sidebar.slider("Efficiency 🟠 (e_y)", 1, MAX_e_y, value=e_y, step=1, key="e_y")
+    st.sidebar.slider("Efficiency 🟠 ", 1, MAX_e_y, value=e_y, step=1, key="e_y")
     st.sidebar.slider(
-        "Move a point along the frontier (🐸 axis)",
+        "Move a point along the frontier ",
         min_value=0.0,
         max_value=float(x_max),
         value=x_move,
