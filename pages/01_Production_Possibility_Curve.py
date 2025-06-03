@@ -42,22 +42,25 @@ def compute_ppf_y(x: float, e_x: int, e_y: int, L: int) -> float:
     inside = L - (x / e_x) ** 2
     return float(e_y * np.sqrt(max(inside, 0.0)))
 # ─── Title ───────────────────────────────────────────────────────────────────
-st.title("Opportunity Cost along the PPF curve")
-
+st.title("Production Possibility Curve")
+st.markdown(''' 
+**Production Possibility Curve**  
+_Production Possibility Curve_ is a representation of the possibility of production of two commodities given some fixed resource _R_.
+''')
 # ─── Session State for sliders ────────────────────────────────────────────────
-if 'L' not in st.session_state:
-    st.session_state.L = 20
+if 'R' not in st.session_state:
+    st.session_state.R = 20
 if 'e_x' not in st.session_state:
     st.session_state.e_x = 10
 if 'e_y' not in st.session_state:
     st.session_state.e_y = 10
 
-L   = st.session_state.L
+R   = st.session_state.R
 e_x = st.session_state.e_x
 e_y = st.session_state.e_y
 
 # Generate current curve
-x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, L)
+x_curve, y_curve, x_max, y_max = generate_curve(e_x, e_y, R)
 
 
 fig_right = go.Figure()
@@ -99,5 +102,5 @@ st.plotly_chart(
 
 st.markdown("---")
 
-st.sidebar.slider("Total Labour (L)", 1, MAX_L, value=L, step=1, key="L")
+st.sidebar.slider("Resource", 1, MAX_R, value=R, step=1, key="R")
 
