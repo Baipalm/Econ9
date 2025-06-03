@@ -6,7 +6,7 @@ st.write("** What is Inquiry Based Learning?**")
 with st.expander(""):
     st.write("""
     According to Santa Ana College, Inquiry-based learning reframes learning as a student-centered activity. Particularly it is defined by and
-    experimental and problem-centric approach^[1]. As opposed to traditional lectures where student are passively listening to instructors, inquiry based learning
+    experimental and problem-centric approach[1]. As opposed to traditional lectures where student are passively listening to instructors, inquiry based learning
     wants students to be active and participate through guided questions.""")
 
 # insert diagram of inquirybased learning
@@ -22,7 +22,7 @@ with st.expander(""):
 st.write("**Is Inquiry based learning better than direct instruction**")
 
 with st.expander(""):
-    st.write(""" No, not necessarily according to science direct there are proponents to both sides and many even prefer direction!^[2]
+    st.write(""" No, not necessarily according to science direct there are proponents to both sides and many even prefer direction![2]
      """)
 
 st.markdown("#### References")
