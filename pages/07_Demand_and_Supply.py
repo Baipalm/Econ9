@@ -4,10 +4,11 @@ import plotly.graph_objects as go
 
 # Title
 st.title("Interactive Supply & Demand ")
-st.markdown("""Now with both supply and demand we can consider the relationship between the graphs. How do you think they are related? Try shifting the demand and supply graphs""")
-
+st.markdown("""Now with both supply and demand we can consider the relationship between the graphs. How do you think they are related? Try shifting the demand and supply graphs. Use your intuition""")
 st.markdown('what do you think green equilibrium point mean?')
-
+with st.expander("Hint: Recall what the point means on each graph"):
+    st.write(""" It is the point where both the buyer is willing to produce and the buyer willing to buy
+     """)
 # Base intercepts
 BASE_SUPPLY_INTERCEPT = 0.0   # Supply: P = Q + (0 + shift_supply)
 BASE_DEMAND_INTERCEPT = 10.0  # Demand: P = –Q + (10 + shift_demand)
@@ -128,4 +129,9 @@ st.plotly_chart(
         "displayModeBar": False
     }
 )
-st.markdonw('How does the equilibrium change as a result of the shifts? Explain')
+st.markdown('How does the equilibrium change as a result of the shifts? Explain')
+with st.expander("Hint: Make sure to consider when the graph has a different slope"):
+    st.markdown(""" The relationship can be simplified to summing the change when we shift each curve
+    - A shift in demand will lead to a respective change in the quantity and price
+    - A shift in supply will lead to a respective change in price but an opposite change in quantity
+     """)
