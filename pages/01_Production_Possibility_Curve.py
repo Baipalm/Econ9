@@ -3,7 +3,7 @@ import numpy as np
 import plotly.graph_objects as go
 
 # ── Constants for slider maximums ────────────────────────────────────────────
-MAX_L   = 40
+MAX_R   = 40
 MAX_e_x = 20
 MAX_e_y = 20
 
