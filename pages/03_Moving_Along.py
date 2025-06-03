@@ -54,7 +54,7 @@ def compute_tangent_slope(x_pt: float, e_x: int, e_y: int, L: int) -> float:
 
 # ─── Title ───────────────────────────────────────────────────────────────────
 st.title("Moving Along the PPC")
-st.markdown('''Begin by playing around with the graph. What happens if the resource or efficiency increases? Does the magnitude of the slope change as move along the curve?''')
+st.markdown('''Begin by playing around with the graph. What happens if the resource or efficiency increases? Does the magnitude of the slope change as move along the curve? What do you think this means?''')
 st.write("**What do you think the magnitude of the slope means?**")
 with st.expander("**Hint**: Recall the magnitude slope tells us how changing the number of frogs produce changes the number of oranges produced"):
     st.write(""" The slope tells use the amount of frogs we have to give up in order to produce more oranges and vice versa. This _trade off_ is a very specific instant of a more general concept, _the opportunity cost_.
@@ -164,7 +164,10 @@ st.plotly_chart(
 )
 
 st.markdown("---")
-
+st.markdown(''' 
+**Definition: Opportunity Cost**  
+_Opportunity Cost_ is cost associated with the next best alternative [1].
+''')
 # ─── Sliders for L, e_x, e_y, and x_move (at the bottom) ────────────────────
 col1, col2 = st.columns(2)
 with col1:
@@ -180,3 +183,9 @@ with col2:
         step=0.05,
         key="x_move"
     )
+st.markdown("""
+### References
+
+1. “Scarcity.” Econlib, www.econlib.org/library/Topics/College/scarcity.html.
+""")
+st.write("**Why Inquiry Based Learning and Economics?**")
