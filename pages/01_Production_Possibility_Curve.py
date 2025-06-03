@@ -34,7 +34,7 @@ def compute_ppf_y(x: float, e_x: int, e_y: int, R: int) -> float:
 # ─── Title ───────────────────────────────────────────────────────────────────
 st.title("Production Possibility Curve")
 st.markdown(''' 
-**Production Possibility Curve**  
+**Definition: Production Possibility Curve**  
 _Production Possibility Curve_ is a representation of the possibility of production of two commodities given some fixed resource _R_ [1].
 ''')
 # ─── Session State for sliders ────────────────────────────────────────────────
